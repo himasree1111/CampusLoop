@@ -1,0 +1,422 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 155 20% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 155 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 155 20% 15%;
+
+    --primary: 155 55% 25%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 155 30% 95%;
+    --secondary-foreground: 155 55% 25%;
+
+    --muted: 155 20% 96%;
+    --muted-foreground: 155 10% 45%;
+
+    --accent: 160 40% 88%;
+    --accent-foreground: 155 55% 25%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 155 20% 90%;
+    --input: 155 20% 94%;
+    --ring: 155 55% 25%;
+
+    /* EcoSwap Design System */
+    --forest-green: 155 55% 25%;
+    --sage-green: 155 30% 45%;
+    --mint-green: 160 40% 88%;
+    --earth-brown: 30 35% 45%;
+    --warm-cream: 45 60% 96%;
+    --nature-gray: 155 10% 45%;
+
+    /* Gradients */
+    --gradient-eco: linear-gradient(135deg, hsl(var(--forest-green)), hsl(var(--sage-green)));
+    --gradient-nature: linear-gradient(180deg, hsl(var(--mint-green)), hsl(var(--warm-cream)));
+    --gradient-hero: linear-gradient(135deg, hsl(155 55% 25%), hsl(160 45% 35%));
+    --gradient-rainbow: linear-gradient(135deg, 
+      hsl(340 80% 95%), 
+      hsl(280 70% 95%), 
+      hsl(220 60% 95%), 
+      hsl(180 50% 95%), 
+      hsl(120 60% 95%), 
+      hsl(60 70% 95%), 
+      hsl(20 80% 95%)
+    );
+
+    /* Shadows */
+    --shadow-eco: 0 4px 20px hsl(155 55% 25% / 0.1);
+    --shadow-card: 0 2px 10px hsl(155 20% 20% / 0.08);
+    --shadow-hover: 0 8px 30px hsl(155 55% 25% / 0.15);
+
+    /* Animations */
+    --transition-eco: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .gradient-eco {
+    background: var(--gradient-eco);
+  }
+  
+  .gradient-nature {
+    background: var(--gradient-nature);
+  }
+  
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .gradient-rainbow {
+    background: var(--gradient-rainbow);
+  }
+  
+  .shadow-eco {
+    box-shadow: var(--shadow-eco);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-hover {
+    box-shadow: var(--shadow-hover);
+  }
+  
+  .transition-eco {
+    transition: var(--transition-eco);
+  }
+
+  /* Dynamic Animated Backgrounds */
+  .animated-gradient {
+    background: linear-gradient(-45deg, 
+      #667eea, #764ba2, #f093fb, #f5576c, 
+      #4facfe, #00f2fe, #43e97b, #38f9d7
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 12s ease-in-out infinite;
+  }
+
+  .animated-gradient-subtle {
+    background: linear-gradient(-45deg, 
+      #667eea, #764ba2, #f093fb, #f5576c, 
+      #4facfe, #00f2fe, #43e97b, #38f9d7,
+      #a8edea, #fed6e3, #ffecd2, #fcb69f
+    );
+    background-size: 600% 600%;
+    animation: gradientShift 16s ease-in-out infinite;
+  }
+
+  .floating-animation {
+    animation: floating 12s ease-in-out infinite;
+  }
+
+  .pulse-glow {
+    animation: pulseGlow 6s ease-in-out infinite;
+  }
+
+  .fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .scale-on-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .scale-on-hover:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(34, 197, 94, 0.2);
+  }
+
+  .dynamic-bg {
+    background: linear-gradient(-45deg, 
+      #667eea, #764ba2, #f093fb, #f5576c, 
+      #4facfe, #00f2fe, #43e97b, #38f9d7,
+      #a8edea, #fed6e3, #ffecd2, #fcb69f,
+      #ff9a9e, #fecfef, #fecfef, #f6d365
+    );
+    background-size: 800% 800%;
+    /* Slowed down the gradient transition for the cover/hero page */
+    animation: dynamicGradient 30s ease-in-out infinite;
+  }
+
+  .particle-bg {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .moving-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: moveShapes 20s linear infinite;
+  }
+
+  .shape:nth-child(1) {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    left: 10%;
+    animation-duration: 15s;
+    animation-delay: 0s;
+  }
+
+  .shape:nth-child(2) {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(45deg, #f093fb, #f5576c);
+    left: 20%;
+    animation-duration: 18s;
+    animation-delay: 2s;
+  }
+
+  .shape:nth-child(3) {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #4facfe, #00f2fe);
+    left: 70%;
+    animation-duration: 22s;
+    animation-delay: 4s;
+  }
+
+  .shape:nth-child(4) {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(45deg, #43e97b, #38f9d7);
+    left: 80%;
+    animation-duration: 16s;
+    animation-delay: 1s;
+  }
+
+  .shape:nth-child(5) {
+    width: 140px;
+    height: 140px;
+    background: linear-gradient(45deg, #a8edea, #fed6e3);
+    left: 50%;
+    animation-duration: 25s;
+    animation-delay: 3s;
+  }
+
+  .wave-animation {
+    animation: wave 3s ease-in-out infinite;
+  }
+
+  .bounce-animation {
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  .rotate-animation {
+    animation: rotate 10s linear infinite;
+  }
+
+  /* Navigation styles */
+  .nav-blur {
+    backdrop-filter: blur(20px);
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Keyframe Animations */
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+}
+
+@keyframes dynamicGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes floating {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-15px) rotate(5deg);
+  }
+  66% {
+    transform: translateY(-5px) rotate(-3deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(102, 126, 234, 0.8);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes moveShapes {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-15px);
+  }
+  60% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
