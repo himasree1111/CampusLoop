@@ -15,7 +15,7 @@ const Footer = () => {
               <div className="p-2 bg-mint/20 rounded-lg">
                 <Recycle className="h-6 w-6 text-mint" />
               </div>
-              <span className="text-2xl font-bold text-mint">EcoSwap</span>
+              <span className="text-2xl font-bold text-mint">CampusLoop</span>
             </div>
             <p className="text-white/80 mb-6 max-w-md leading-relaxed">
               Building a sustainable future through community-driven swapping. Every exchange reduces waste and creates connections.
@@ -53,7 +53,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-white/80">
                 <Mail size={16} />
-                <span>hello@ecoswap.com</span>
+                <span>hello@campusloop.com</span>
               </li>
               <li className="flex items-center gap-2 text-white/80">
                 <MessageCircle size={16} />
