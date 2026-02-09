@@ -43,7 +43,7 @@ const NewsletterSection = () => {
             </h2>
             
             <p className="text-gray-600 mb-8 text-lg fade-in-up" style={{ animationDelay: '0.2s' }}>
-              Get the latest sustainability tips, swap ideas, and eco-friendly living advice delivered to your inbox.
+              Turning campus knowledge into campus intelligence.
             </p>
             
             <form onSubmit={handleSubmit} className="space-y-4 fade-in-up" style={{ animationDelay: '0.4s' }}>
