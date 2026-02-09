@@ -14,16 +14,16 @@ const Index = () => {
           <div id="home" className="w-full">
             <HeroSection />
           </div>
-          <div id="browse" className="container mx-auto px-4">
+          <div id="browse" className="w-full px-4">
             <BrowseItems />
           </div>
-          <div className="container mx-auto px-4">
+          <div className="w-full px-4">
             <FAQSection />
           </div>
-          <div className="container mx-auto px-4">
+          <div className="w-full px-4">
             <NewsletterSection />
           </div>
-          <div className="container mx-auto px-4">
+          <div className="w-full px-4">
             <Footer />
           </div>
         </div>

@@ -29,7 +29,7 @@ const NewsletterSection = () => {
       <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-r from-purple-400/15 to-pink-400/15 rounded-full blur-3xl bounce-animation" style={{ animationDelay: '2s' }}></div>
       <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-full blur-xl rotate-animation" style={{ animationDelay: '1s' }}></div>
       
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="w-full px-4 relative z-10">
         <Card className="max-w-2xl mx-auto shadow-2xl border-white/20 bg-white/95 backdrop-blur-lg scale-on-hover">
           <CardContent className="p-8 md:p-12 text-center">
             <div className="flex justify-center mb-6">

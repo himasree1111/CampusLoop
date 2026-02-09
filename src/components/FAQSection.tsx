@@ -31,7 +31,7 @@ const FAQSection = () => {
 
   return (
     <section className="py-16 lg:py-24 bg-cream">
-      <div className="container mx-auto px-4">
+      <div className="w-full px-4">
         <div className="text-center mb-12">
           <div className="flex justify-center mb-4">
             <div className="p-3 bg-forest/10 rounded-full">

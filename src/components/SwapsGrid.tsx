@@ -131,14 +131,14 @@ const SwapsGrid = () => {
     {
       id: "9",
       title: "English Textbook",
-      description: "Complete lab safety kit including goggles, gloves, apron, and safety manual. Essential for chemistry and biology labs.",
-      category: "Lab Equipment",
+      description: "excellent condition English textbook covering literature and language concepts. Suitable for high school and college students.",
+      category: "Textbooks",
       condition: "Excellent",
       location: "Science Building Front Desk",
       postedBy: "Lab Assistant",
       postedDate: "3 days ago",
       image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeS54dopGZ_MjwOXrlP-vKABhc9VI7Gqs5G9T68nSadw&s",
-      tags: ["Safety", "Lab", "Equipment"]
+      tags: ["Textbook", "Exam", "B.tech I Year"]
     }
   ];
 
@@ -218,7 +218,7 @@ const SwapsGrid = () => {
   };
 
   return (
-    <section className="py-16 lg:py-24 dynamic-bg relative overflow-hidden">
+    <section className="min-h-screen py-16 lg:py-24 dynamic-bg relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 to-purple-900/20" />
       
       {/* Dynamic background elements */}
@@ -226,7 +226,7 @@ const SwapsGrid = () => {
       <div className="absolute bottom-20 right-20 w-36 h-36 bg-gradient-to-r from-pink-400/15 to-red-400/15 rounded-full blur-2xl wave-animation" style={{ animationDelay: '1s' }}></div>
       <div className="absolute top-1/2 left-10 w-24 h-24 bg-gradient-to-r from-teal-400/20 to-cyan-400/20 rounded-full blur-lg bounce-animation" style={{ animationDelay: '2s' }}></div>
       
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="w-full px-4 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
             Campus Resources Available

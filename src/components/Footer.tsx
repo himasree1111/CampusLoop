@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-forest text-white">
-      <div className="container mx-auto px-4 py-12 lg:py-16">
+      <div className="w-full px-4 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo and Mission */}
           <div className="lg:col-span-2">
@@ -74,7 +74,7 @@ const Footer = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/60 text-sm">
-            © {currentYear} EcoSwap. All rights reserved.
+            © {currentYear} CampusLoop. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
             <Button variant="ghost" className="text-white/60 hover:text-mint p-0 h-auto font-normal transition-all duration-600">

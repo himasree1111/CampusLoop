@@ -20,7 +20,7 @@ Remember: sustainability is a journey, not a destination. Start small, stay cons
 
   return (
     <section id="sustainability-insights" className="py-16 lg:py-24 bg-cream">
-      <div className="container mx-auto px-4">
+      <div className="w-full px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-forest mb-4">
             Sustainability Insights

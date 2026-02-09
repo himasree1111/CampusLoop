@@ -134,6 +134,10 @@ All colors MUST be HSL.
   }
 }
 
+html, body, #root {
+  height: 100%;
+}
+
 @layer utilities {
   .gradient-eco {
     background: var(--gradient-eco);
