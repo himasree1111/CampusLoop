@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Heart, MapPin, Clock, User, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 interface SwapItem {
@@ -22,14 +22,52 @@ interface SwapItem {
 const SwapsGrid = () => {
   const [selectedItem, setSelectedItem] = useState<SwapItem | null>(null);
   const [wishlistItems, setWishlistItems] = useState<string[]>([]);
+  const [likedCategories, setLikedCategories] = useState<string[]>([]);
+  
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedWishlist = localStorage.getItem('campusLoopWishlist');
+    if (savedWishlist) {
+      setWishlistItems(JSON.parse(savedWishlist));
+    }
+    
+    const savedCategories = localStorage.getItem('campusLoopLikedCategories');
+    if (savedCategories) {
+      setLikedCategories(JSON.parse(savedCategories));
+    }
+  }, []);
+  
+  // Save to localStorage on changes
+  useEffect(() => {
+    localStorage.setItem('campusLoopWishlist', JSON.stringify(wishlistItems));
+  }, [wishlistItems]);
+  
+  useEffect(() => {
+    localStorage.setItem('campusLoopLikedCategories', JSON.stringify(likedCategories));
+  }, [likedCategories]);
 
-  const toggleWishlist = (itemId: string) => {
-    setWishlistItems(prev => 
-      prev.includes(itemId) 
+
+
+  const toggleWishlist = (itemId: string, item: SwapItem) => {
+    setWishlistItems(prev => {
+      const isLiked = prev.includes(itemId);
+      const newWishlist = isLiked 
         ? prev.filter(id => id !== itemId) 
-        : [...prev, itemId]
-    );
+        : [...prev, itemId];
+      if (!isLiked) {
+        setLikedCategories(prevCats => {
+          const newCats = [...prevCats, item.category];
+          return newCats.filter((cat, index, self) => self.indexOf(cat) === index);
+        });
+        toast.success(`Showing ${item.category.toLowerCase()} recommendations!`);
+      } else {
+        setLikedCategories(prevCats => prevCats.filter(cat => cat !== item.category));
+      }
+      return newWishlist;
+    });
   };
+
+
 
   const swapItems: SwapItem[] = [
     {
@@ -207,7 +245,8 @@ const SwapsGrid = () => {
               variant="outline" 
               size="icon" 
               className={`border-forest text-forest hover:bg-forest/10 scale-on-hover ${isWishlisted ? 'text-red-500' : ''}`}
-              onClick={() => toggleWishlist(item.id)}
+onClick={() => toggleWishlist(item.id, item)}
+
             >
               {isWishlisted ? <X size={20} /> : <Heart size={20} />}
             </Button>
@@ -237,9 +276,11 @@ const SwapsGrid = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {swapItems.map((item) => {
+          {swapItems.filter(rec => 
+            likedCategories.length === 0 || 
+            likedCategories.some(cat => rec.category === cat || rec.tags.some(tag => tag.toLowerCase().includes(cat.toLowerCase())))
+          ).map((item) => {
             const isWishlisted = wishlistItems.includes(item.id);
-            
             return (
               <Dialog key={item.id}>
                 <DialogTrigger asChild>
@@ -260,14 +301,13 @@ const SwapsGrid = () => {
                         {item.category}
                       </Badge>
                       
-                      {/* Wishlist button */}
                       <Button 
                         size="icon"
                         variant="outline"
-                        className="absolute top-2 left-2 border-forest text-forest hover:bg-forest/10 scale-on-hover"
+                        className={`absolute top-2 left-2 border-forest hover:bg-forest/10 scale-on-hover ${isWishlisted ? 'text-red-500 fill-current' : 'text-forest'}`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          toggleWishlist(item.id);
+                          toggleWishlist(item.id, item);
                         }}
                       >
                         {isWishlisted ? <X size={16} /> : <Heart size={16} />}
