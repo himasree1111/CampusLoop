@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Home, Package, User, Shield, Menu, X, BookOpen } from "lucide-react";
+import { Home, Package, User, Shield, ShieldAlert, Menu, X, BookOpen } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 interface DashboardLayoutProps {
@@ -14,7 +14,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const navItems = [
     { id: 'home', name: 'Home', icon: Home, path: '/' },
-    { id: 'browse', name: 'Browse Items', icon: Package, path: '/browse' },
+{ id: 'browse', name: 'Browse Items', icon: Package, path: '/browse' },
+    { id: 'fake-detector', name: 'Fake Content Detector', icon: ShieldAlert, path: '/fake-detector' },
     { id: 'account', name: 'My Account', icon: User, path: '/account' },
     { id: 'admin', name: 'Admin Panel', icon: Shield, path: '/admin' },
   ];

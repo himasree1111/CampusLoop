@@ -11,6 +11,7 @@ import AdminPage from "./pages/AdminPage";
 import DashboardLayout from "./components/DashboardLayout";
 import HeroSection from "./components/HeroSection";
 import LoginPage from "./pages/LoginPage";
+import FakeContentDetectorPage from "./pages/FakeContentDetector";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,11 @@ const App = () => (
           <Route path="/home" element={
             <DashboardLayout>
               <HeroSection />
+            </DashboardLayout>
+          } />
+          <Route path="/fake-detector" element={
+            <DashboardLayout>
+              <FakeContentDetectorPage />
             </DashboardLayout>
           } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

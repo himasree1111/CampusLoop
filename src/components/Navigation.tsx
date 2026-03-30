@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Home, Package, User, Shield, Menu, X, BookOpen, LogIn } from "lucide-react";
+import { Home, Package, User, Shield, ShieldAlert, Menu, X, BookOpen, LogIn } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,8 @@ const Navigation = () => {
 
   const navItems = [
     { name: "Home", icon: Home, path: "/" },
-    { name: "Browse Items", icon: Package, path: "/browse" },
+{ name: "Browse Items", icon: Package, path: "/browse" },
+    { name: "Fake Content Detector", icon: ShieldAlert, path: "/fake-detector" },
     { name: "My Account", icon: User, path: "/account" },
     { name: "Admin Panel", icon: Shield, path: "/admin" },
   ];
