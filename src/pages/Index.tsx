@@ -14,9 +14,9 @@ const Index = () => {
           <div id="home" className="w-full">
             <HeroSection />
           </div>
-          <div id="browse" className="w-full px-4">
-            <BrowseItems />
+
           </div>
+
           <div className="w-full px-4">
             <FAQSection />
           </div>
