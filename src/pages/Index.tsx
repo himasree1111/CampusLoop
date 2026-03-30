@@ -3,7 +3,6 @@ import NewsletterSection from "@/components/NewsletterSection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
-import BrowseItems from "@/components/SwapsGrid";
 
 const Index = () => {
   return (
@@ -14,9 +13,6 @@ const Index = () => {
           <div id="home" className="w-full">
             <HeroSection />
           </div>
-
-          </div>
-
           <div className="w-full px-4">
             <FAQSection />
           </div>
@@ -33,3 +29,4 @@ const Index = () => {
 };
 
 export default Index;
+
