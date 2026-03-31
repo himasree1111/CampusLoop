@@ -6,16 +6,10 @@ import { Trophy, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const mockUsers: LeaderboardUser[] = [
-  { name: "User1", score: 50 },
-  { name: "User2", score: 40 },
-  { name: "User3", score: 35 },
-  { name: "User4", score: 28 },
-  { name: "User5", score: 22 },
-  { name: "User6", score: 18 },
-  { name: "User7", score: 15 },
-  { name: "User8", score: 12 },
-  { name: "User9", score: 10 },
-  { name: "User10", score: 8 },
+  { name: "Himasree", score: 52, itemsGiven: 5, carbon: 12 },
+  { name: "Ravi", score: 48, itemsGiven: 4, carbon: 10 },
+  { name: "Anjali", score: 40, itemsGiven: 3, carbon: 8 },
+  { name: "Kiran", score: 30, itemsGiven: 2, carbon: 6 }
 ];
 
 const sortedUsers = [...mockUsers].sort((a, b) => b.score - a.score);
@@ -27,9 +21,9 @@ const Leaderboard = ({}: LeaderboardProps) => {
     switch (index) {
       case 0:
         return (
-          <Badge className="bg-yellow-400 text-black border-2 border-yellow-500 shadow-lg mr-3">
+          <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black border-2 border-yellow-500 shadow-lg mr-3 px-3 py-1 text-sm font-bold">
             <Crown className="h-3 w-3 mr-1" />
-            1st
+            Top Contributor
           </Badge>
         );
       case 1:
@@ -41,9 +35,9 @@ const Leaderboard = ({}: LeaderboardProps) => {
         );
       case 2:
         return (
-          <Badge className="bg-amber-400 text-black border-2 border-amber-500 shadow-lg mr-3">
+          <Badge className="bg-gradient-to-r from-emerald-400 to-green-400 text-black border-2 border-emerald-500 shadow-lg mr-3 px-3 py-1 text-sm font-bold">
             <Trophy className="h-3 w-3 mr-1" />
-            3rd
+            Eco Champion
           </Badge>
         );
       default:
@@ -86,10 +80,10 @@ const Leaderboard = ({}: LeaderboardProps) => {
                   <div className="text-2xl font-black text-emerald-600">{user.score}</div>
                 </TableCell>
                 <TableCell className="text-right text-muted-foreground">
-                  {Math.floor(user.score / 10)}
+                  {user.itemsGiven}
                 </TableCell>
                 <TableCell className="text-right text-muted-foreground">
-                  {(user.score * 0.5).toFixed(1)}
+                  {user.carbon.toFixed(1)}
                 </TableCell>
               </TableRow>
             ))}

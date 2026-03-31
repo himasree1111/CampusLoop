@@ -7,6 +7,8 @@ export interface UserStats {
 export interface LeaderboardUser {
   name: string;
   score: number;
+  itemsGiven: number;
+  carbon: number;
 }
 
 export const carbonMap: Record<string, number> = {

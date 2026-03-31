@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import ImpactCard from "@/components/ImpactCard";
 import { Clock, User, Shield } from "lucide-react";
 
 const AdminPage = () => {
@@ -23,15 +24,25 @@ const AdminPage = () => {
     }
   ];
 
+  // Admin metrics mock data
+  const adminStats = {
+    totalItemsReused: 120,
+    totalCarbonSaved: 245.5,
+    totalUsers: 35,
+    totalListings: 200
+  };
+
   return (
     <div className="py-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-8 text-center flex items-center justify-center gap-3">
           <Shield className="h-8 w-8" />
           Admin Panel
         </h2>
         
-        <Tabs defaultValue="pending" className="w-full">
+        <ImpactCard stats={adminStats} />
+        
+        <Tabs defaultValue="pending" className="w-full mt-12">
           <TabsList className="grid w-full grid-cols-2 mb-8">
             <TabsTrigger value="pending" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
@@ -92,3 +103,4 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+

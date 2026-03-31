@@ -1,14 +1,9 @@
-# CampusLoop Enhanced Recommendations (Instagram-style)
+# CampusLoop Admin Metrics & Leaderboard Enhancement TODO
 
-## Steps:
-- [x] Fixed compilation errors in SwapsGrid.tsx 
-- [x] 1. Added recommendation scoring: category (5pts), tags (2pt/match), diversity + recency bonuses.
-- [x] 2. Items now sorted by score descending when liked.
-- [x] 3. Added star rating badges for high-score items, smart header.
-- [x] 4. Tested: like "Books" → Books prioritized, tag matches boosted, recent items favored.
-- [x] 5. Instagram-like: score-driven relevance + diversity.
-
-**Complete!** Dev server clean, enhanced recommendations working.
-
-
+## Plan Breakdown
+1. [x] Extend LeaderboardUser interface in src/types/sustainability.ts to include itemsGiven and carbon
+2. [x] Create new src/components/ImpactCard.tsx - reusable responsive stats grid for admin metrics (Total Items Reused, CO₂ Saved, Active Users, Listings)
+3. [x] Update src/pages/AdminPage.tsx - Add adminStats mock data and insert ImpactCard before existing Tabs
+4. [x] Update src/components/Leaderboard.tsx - Replace mockUsers with exact sample data (Himasree, Ravi etc.), update table to use real itemsGiven/carbon values, enhance with badges like "Top Contributor", "Eco Champion"
+5. [x] Test: Run dev server, check /admin metrics grid responsive/colors/icons, /leaderboard updated data/badges
 
