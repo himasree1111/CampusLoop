@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Home, Package, User, Shield, ShieldAlert, Menu, X, BookOpen, LogIn } from "lucide-react";
+import { Home, Package, User, Shield, ShieldAlert, Trophy, Menu, X, BookOpen, LogIn } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,6 +11,7 @@ const Navigation = () => {
     { name: "Home", icon: Home, path: "/" },
 { name: "Browse Items", icon: Package, path: "/browse" },
     { name: "Fake Content Detector", icon: ShieldAlert, path: "/fake-detector" },
+    { name: "Leaderboard", icon: Trophy, path: "/leaderboard" },
     { name: "My Account", icon: User, path: "/account" },
     { name: "Admin Panel", icon: Shield, path: "/admin" },
   ];

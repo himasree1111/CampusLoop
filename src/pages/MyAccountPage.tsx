@@ -14,8 +14,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import StatsCard from "@/components/StatsCard";
+import { useMemo } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Package, Heart, Clock, CheckCircle, XCircle, Plus, Image, Edit3, Trash2, Eye, MessageCircle } from "lucide-react";
+import { Package, Heart, Clock, CheckCircle, XCircle, Plus, Image, Edit3, Trash2, Eye, MessageCircle, Leaf } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +29,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { carbonMap, UserStats } from "@/types/sustainability";
 
 
 
@@ -59,6 +62,35 @@ const [formData, setFormData] = useState({
     image: ''
   });
   const [imagePreview, setImagePreview] = useState('');
+
+  const userStats: UserStats = useMemo(() => {
+    const givenItems = listings.filter(item => item.status === "given");
+    const itemsGiven = givenItems.length;
+    const carbonSaved = givenItems.reduce((sum, item) => {
+      return sum + (carbonMap[item.category || "Other"] || 1);
+    }, 0);
+    const itemsReceived = 2; // Mock data
+
+    return {
+      itemsGiven,
+      itemsReceived,
+      carbonSaved
+    };
+  }, [listings]);
+
+  const sustainabilityScore = useMemo(() => {
+    return userStats.itemsGiven * 10 + userStats.carbonSaved * 2;
+  }, [userStats]);
+
+  const handleMarkAsGiven = (id: string) => {
+    setListings(prev => prev.map(item =>
+      item.id === id ? { ...item, status: "given" } : item
+    ));
+    toast({
+      title: "Success!",
+      description: "Item marked as given! 🌿 Your carbon saved updated."
+    });
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -190,6 +222,9 @@ const [formData, setFormData] = useState({
           My Account
         </h2>
         
+        <StatsCard stats={userStats} score={sustainabilityScore} />
+        <div className="h-8" />
+        
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="max-w-md sm:max-w-lg">
             <DialogHeader>
@@ -317,7 +352,18 @@ const [formData, setFormData] = useState({
                       <span>Posted {listing.postedDate}</span>
                       <span>{listing.requests} requests received</span>
                     </div>
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex gap-2 mt-3 flex-wrap">
+                      {listing.status !== "given" && (
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="bg-green-50 border-green-200 hover:bg-green-100 text-green-800 font-medium"
+                          onClick={() => handleMarkAsGiven(listing.id)}
+                        >
+                          <Leaf className="h-3 w-3 mr-1" />
+                          Mark as Given
+                        </Button>
+                      )}
                       <Button 
                         size="sm" 
                         variant="outline"
