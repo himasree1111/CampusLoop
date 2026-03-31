@@ -15,10 +15,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Package, Heart, Clock, CheckCircle, XCircle, Plus } from "lucide-react";
+import { Package, Heart, Clock, CheckCircle, XCircle, Plus, Image, Edit3, Trash2, Eye, MessageCircle } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 
 
 const MyAccountPage = () => {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
   const [listings, setListings] = useState([
     {
       id: "1",
@@ -36,47 +50,89 @@ const MyAccountPage = () => {
     }
   ]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({
+
+const [formData, setFormData] = useState({
     title: '',
     category: '',
     description: '',
-    location: ''
+    location: '',
+    image: ''
   });
+  const [imagePreview, setImagePreview] = useState('');
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+        setFormData(prev => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleDelete = (id: string) => {
+  setListings(prev => prev.filter(item => item.id !== id));
+
+  toast({
+    title: "Deleted",
+    description: "Item removed successfully"
+  });
+};
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.title || !formData.category) {
-      toast({
-        title: "Error",
-        description: "Title and category are required.",
-        variant: "destructive"
-      });
-      return;
-    }
+  e.preventDefault();
 
+  if (!formData.title || !formData.category) {
+    toast({
+      title: "Error",
+      description: "Title and category are required.",
+      variant: "destructive"
+    });
+    return;
+  }
+
+  if (editingId) {
+    // UPDATE EXISTING
+    setListings(prev =>
+      prev.map(item =>
+        item.id === editingId
+          ? { ...item, ...formData }
+          : item
+      )
+    );
+
+    setEditingId(null);
+
+    toast({
+      title: "Updated",
+      description: "Item updated successfully"
+    });
+
+  } else {
+    // CREATE NEW (same as before)
     const newListing = {
       id: Date.now().toString(),
       title: formData.title,
-      status: "pending" as const,
+      status: "pending",
       requests: 0,
-      postedDate: new Date().toLocaleDateString('en-US', { 
-        day: 'numeric', 
-        month: 'short' 
-      }) + ' ago',
-      category: formData.category,
-      description: formData.description,
-      location: formData.location
+      postedDate: "Just now",
+      ...formData
     };
 
     setListings(prev => [newListing, ...prev]);
-    setFormData({ title: '', category: '', description: '', location: '' });
-    setIsDialogOpen(false);
+
     toast({
       title: "Success",
-      description: "Your new item has been posted! It will be reviewed soon."
+      description: "Item posted!"
     });
-  };
+  }
+
+  setFormData({ title: '', category: '', description: '', location: '', image: '' });
+  setImagePreview('');
+  setIsDialogOpen(false);
+};
 
   const myRequests = [
     {
@@ -187,6 +243,17 @@ const MyAccountPage = () => {
                   placeholder="e.g. Library, Room 101"
                 />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="image">
+                  Item Photo <Image className="inline ml-1 h-4 w-4" />
+                </Label>
+                <Input id="image" type="file" accept="image/*" onChange={handleImageChange} />
+                {imagePreview && (
+                  <div className="mt-2 p-2 border rounded-md bg-muted/50">
+                    <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded border" />
+                  </div>
+                )}
+              </div>
               <DialogFooter className="gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                   Cancel
@@ -196,7 +263,28 @@ const MyAccountPage = () => {
             </form>
           </DialogContent>
         </Dialog>
-        
+        <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>{selectedItem?.title || selectedItem?.itemName}</DialogTitle>
+    </DialogHeader>
+
+    <p><strong>Name:</strong> {selectedItem?.title || selectedItem?.itemName}</p>
+    <p><strong>Status:</strong> {selectedItem?.status}</p>
+
+    {selectedItem?.description && (
+      <p><strong>Description:</strong> {selectedItem.description}</p>
+    )}
+
+    {selectedItem?.location && (
+      <p><strong>Location:</strong> {selectedItem.location}</p>
+    )}
+
+    <DialogFooter>
+      <Button onClick={() => setSelectedItem(null)}>Close</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
         <Tabs defaultValue="listings" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-8">
             <TabsTrigger value="listings" className="flex items-center gap-2">
@@ -213,7 +301,12 @@ const MyAccountPage = () => {
             <div className="space-y-4">
               {listings.map((listing) => (
                 <Card key={listing.id} className="hover:shadow-md transition-shadow">
-                  <CardHeader className="pb-3">
+  <CardHeader className="pb-3">
+                    {listing.image && (
+                      <div className="mb-2">
+                        <img src={listing.image} alt={listing.title} className="w-full h-48 object-cover rounded-md" />
+                      </div>
+                    )}
                     <div className="flex justify-between items-start">
                       <CardTitle className="text-lg">{listing.title}</CardTitle>
                       {getStatusBadge(listing.status)}
@@ -225,10 +318,24 @@ const MyAccountPage = () => {
                       <span>{listing.requests} requests received</span>
                     </div>
                     <div className="flex gap-2 mt-3">
-                      <Button size="sm" variant="outline">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => {
+                          setEditingId(listing.id);
+                          setFormData({
+                            title: listing.title,
+                            category: listing.category || '',
+                            description: listing.description || '',
+                            location: listing.location || '',
+                            image: listing.image || ''
+                          });
+                          setIsDialogOpen(true);
+                        }}
+                      >
                         Edit Listing
                       </Button>
-                      <Button size="sm" variant="destructive" className="ml-auto">
+                      <Button size="sm" variant="destructive" className="ml-auto" onClick={() => handleDelete(listing.id)}>
                         Delete
                       </Button>
                     </div>
@@ -258,7 +365,7 @@ const MyAccountPage = () => {
                     <div className="text-sm text-gray-600">
                       Requested {request.requestedDate}
                     </div>
-                    <Button size="sm" variant="outline" className="mt-3">
+                    <Button size="sm" variant="outline"  className="mt-3" onClick={() => setSelectedItem(request)}>
                       View Details
                     </Button>
                   </CardContent>
