@@ -3,7 +3,7 @@ import { ArrowRight, BookOpen } from "lucide-react";
 
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden dynamic-bg min-h-screen flex items-center">
+    <section className="relative overflow-hidden dynamic-bg pt-20 min-h-screen flex items-center">
       <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-transparent to-black/20" />
       
       {/* Enhanced floating elements with more variety */}
@@ -35,13 +35,9 @@ const HeroSection = () => {
               variant="eco"
               size="lg" 
               className="px-8 py-6 text-lg font-semibold transform hover:scale-110 active:scale-95 transition-all duration-600 wave-animation"
-              onClick={() => {
-                document.getElementById('browse')?.scrollIntoView({ 
-                  behavior: 'smooth' 
-                });
-              }}
+              onClick={() => window.location.href = '/login'}
             >
-              Explore Resources
+              Get Started
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-2 transition-transform duration-300 bounce-animation" />
             </Button>
           </div>

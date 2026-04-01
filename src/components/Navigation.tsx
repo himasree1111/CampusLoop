@@ -56,16 +56,7 @@ const Navigation = () => {
                 </Button>
               );
             })}
-            {location.pathname === '/' && (
-              <Button
-                variant="ghost"
-                className="hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 ml-2"
-                onClick={() => navigateTo("/login")}
-              >
-                <LogIn className="h-4 w-4 mr-2" />
-                Login
-              </Button>
-            )}
+
           </div>
 
           {/* Mobile Menu Button */}
@@ -99,16 +90,6 @@ const Navigation = () => {
                   </Button>
                 );
               })}
-              {location.pathname === '/' && (
-                <Button
-                  variant="ghost"
-                  className="justify-start hover:bg-gray-100 transform hover:scale-105 transition-all duration-300"
-                  onClick={() => navigateTo("/login")}
-                >
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Login
-                </Button>
-              )}
             </div>
           </div>
         )}
