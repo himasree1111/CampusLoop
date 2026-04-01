@@ -1,14 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { User, Package, Leaf, CheckCircle, Clock, XCircle, Heart, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,154 +12,51 @@ import { useState } from "react";
 import StatsCard from "@/components/StatsCard";
 import { useMemo } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Package, Heart, Clock, CheckCircle, XCircle, Plus, Image, Edit3, Trash2, Eye, MessageCircle, Leaf } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { carbonMap, UserStats } from "@/types/sustainability";
 
-
-
 const MyAccountPage = () => {
+  const [activeTab, setActiveTab] = useState('profile');
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [listings, setListings] = useState([
-    {
-      id: "1",
-      title: "Organic Chemistry Textbook",
-      status: "approved",
-      requests: 3,
-      postedDate: "1 week ago"
-    },
-    {
-      id: "2",
-      title: "Desk Lamp",
-      status: "pending",
-      requests: 0,
-      postedDate: "2 days ago"
-    }
-  ]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-const [formData, setFormData] = useState({
+  const [editProfileMode, setEditProfileMode] = useState(false);
+  const [profile, setProfile] = useState({
+    name: "John Doe",
+    email: "john@example.com",
+    phone: "+91 9876543210",
+    campusLocation: "Main Campus",
+    bio: "Student passionate about sustainability 🌿"
+  });
+  const [formData, setFormData] = useState({
     title: '',
     category: '',
     description: '',
     location: '',
     image: ''
   });
-  const [imagePreview, setImagePreview] = useState('');
-
-  const userStats: UserStats = useMemo(() => {
-    const givenItems = listings.filter(item => item.status === "given");
-    const itemsGiven = givenItems.length;
-    const carbonSaved = givenItems.reduce((sum, item) => {
-      return sum + (carbonMap[item.category || "Other"] || 1);
-    }, 0);
-    const itemsReceived = 2; // Mock data
-
-    return {
-      itemsGiven,
-      itemsReceived,
-      carbonSaved
-    };
-  }, [listings]);
-
-  const sustainabilityScore = useMemo(() => {
-    return userStats.itemsGiven * 10 + userStats.carbonSaved * 2;
-  }, [userStats]);
-
-  const handleMarkAsGiven = (id: string) => {
-    setListings(prev => prev.map(item =>
-      item.id === id ? { ...item, status: "given" } : item
-    ));
-    toast({
-      title: "Success!",
-      description: "Item marked as given! 🌿 Your carbon saved updated."
-    });
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-        setFormData(prev => ({ ...prev, image: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  const handleDelete = (id: string) => {
-  setListings(prev => prev.filter(item => item.id !== id));
-
-  toast({
-    title: "Deleted",
-    description: "Item removed successfully"
-  });
-};
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-
-  if (!formData.title || !formData.category) {
-    toast({
-      title: "Error",
-      description: "Title and category are required.",
-      variant: "destructive"
-    });
-    return;
-  }
-
-  if (editingId) {
-    // UPDATE EXISTING
-    setListings(prev =>
-      prev.map(item =>
-        item.id === editingId
-          ? { ...item, ...formData }
-          : item
-      )
-    );
-
-    setEditingId(null);
-
-    toast({
-      title: "Updated",
-      description: "Item updated successfully"
-    });
-
-  } else {
-    // CREATE NEW (same as before)
-    const newListing = {
-      id: Date.now().toString(),
-      title: formData.title,
+  const listings = useState([
+    {
+      id: "1",
+      title: "Organic Chemistry Textbook",
+      description: "Chemistry textbook",
+      category: "Books",
+      location: "Library",
+      status: "approved",
+      requests: 3,
+      postedDate: "1 week ago"
+    },
+    {
+      id: "2",
+      title: "Calculator",
+      description: "Scientific calculator",
+      category: "Electronics",
+      location: "Math Dept",
       status: "pending",
       requests: 0,
-      postedDate: "Just now",
-      ...formData
-    };
-
-    setListings(prev => [newListing, ...prev]);
-
-    toast({
-      title: "Success",
-      description: "Item posted!"
-    });
-  }
-
-  setFormData({ title: '', category: '', description: '', location: '', image: '' });
-  setImagePreview('');
-  setIsDialogOpen(false);
-};
+      postedDate: "2 days ago"
+    }
+  ])[0];
 
   const myRequests = [
     {
@@ -181,248 +73,297 @@ const [formData, setFormData] = useState({
     }
   ];
 
+  const userStats: UserStats = useMemo(() => {
+    const givenItems = listings.filter(item => item.status === "given");
+    const itemsGiven = givenItems.length;
+    const carbonSaved = givenItems.reduce((sum, item) => sum + (carbonMap[item.category || "Other"] || 1), 0);
+    return {
+      itemsGiven,
+      itemsReceived: 2,
+      carbonSaved
+    };
+  }, [listings]);
+
+  const sustainabilityScore = userStats.itemsGiven * 10 + userStats.carbonSaved * 2;
+
+  const handleMarkAsGiven = (id: string) => {
+    toast({
+      title: "Success!",
+      description: "Item marked as given! 🌿",
+      duration: 3000
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    toast({
+      title: "Deleted",
+      description: "Item removed successfully"
+    });
+  };
+
+  const handleProfileUpdate = () => {
+    toast({ title: "Saved!", description: "Profile updated." });
+    setEditProfileMode(false);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-          <Clock className="mr-1 h-3 w-3" />
-          Pending
-        </span>;
+        return (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+            <Clock className="mr-1 h-3 w-3" />
+            Pending
+          </span>
+        );
       case "approved":
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          <CheckCircle className="mr-1 h-3 w-3" />
-          Approved
-        </span>;
+        return (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            <CheckCircle className="mr-1 h-3 w-3" />
+            Approved
+          </span>
+        );
       case "given":
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-          <CheckCircle className="mr-1 h-3 w-3" />
-          Given Away
-        </span>;
-      case "accepted":
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-          <CheckCircle className="mr-1 h-3 w-3" />
-          Accepted
-        </span>;
-      case "rejected":
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-          <XCircle className="mr-1 h-3 w-3" />
-          Rejected
-        </span>;
+        return (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+            <CheckCircle className="mr-1 h-3 w-3" />
+            Given
+          </span>
+        );
       default:
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-          Unknown
-        </span>;
+        return <span>Unknown</span>;
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title || !formData.category) {
+      toast({
+        title: "Error",
+        description: "Title and category required",
+        variant: "destructive"
+      });
+      return;
+    }
+    toast({ title: editingId ? "Updated" : "Posted!", description: "Item saved" });
+    setIsDialogOpen(false);
+    setFormData({ title: '', category: '', description: '', location: '', image: '' });
+  };
+
   return (
-    <div className="py-8">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-8 text-center">
-          My Account
-        </h2>
-        
-        <StatsCard stats={userStats} score={sustainabilityScore} />
-        <div className="h-8" />
-        
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-md sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Post New Item</DialogTitle>
-              <DialogDescription>
-                Fill in the details to post a new item for swapping.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Title *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  placeholder="e.g. Physics Textbook"
-                  required
-                />
+    <div className="py-8 max-w-7xl mx-auto px-4 lg:px-8">
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Sidebar */}
+        <div className="lg:w-80 flex-shrink-0">
+          <Card className="sticky top-24">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-bold text-center bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
+                My Account
+              </CardTitle>
+              <div className="flex flex-col items-center space-y-3 p-4 border rounded-2xl bg-gradient-to-br from-blue-50 to-emerald-50">
+<div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
+                    JD
+                  </div>
+
+                <h3 className="text-lg font-semibold">{profile.name}</h3>
+                <div className="text-xs text-gray-500 text-center">
+                  Score: <span className="font-bold text-emerald-600">{sustainabilityScore}</span>
+                </div>
               </div>
+            </CardHeader>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-1 p-1 bg-muted rounded-lg">
+                <TabsTrigger value="profile" className="justify-start">
+                  <User className="mr-2 h-4 w-4" /> Profile
+                </TabsTrigger>
+                <TabsTrigger value="sustainability" className="justify-start">
+                  <Leaf className="mr-2 h-4 w-4" /> Impact
+                </TabsTrigger>
+                <TabsTrigger value="activity" className="justify-start">
+                  <Package className="mr-2 h-4 w-4" /> Activity
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </Card>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 space-y-8">
+          {activeTab === 'profile' && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <User className="h-6 w-6 text-muted-foreground" />
+                  <div>
+                    <CardTitle>Profile Details</CardTitle>
+                    <CardDescription>Update your personal information</CardDescription>
+                  </div>
+                  <Button variant={editProfileMode ? "outline" : "default"} onClick={() => setEditProfileMode(!editProfileMode)} className="ml-auto">
+                    {editProfileMode ? "Cancel" : "Edit"}
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input id="name" value={profile.name} onChange={(e) => setProfile({...profile, name: e.target.value})} disabled={!editProfileMode} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" value={profile.email} onChange={(e) => setProfile({...profile, email: e.target.value})} disabled={!editProfileMode} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input id="phone" value={profile.phone} onChange={(e) => setProfile({...profile, phone: e.target.value})} disabled={!editProfileMode} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="campus">Campus Location</Label>
+                    <Input id="campus" value={profile.campusLocation} onChange={(e) => setProfile({...profile, campusLocation: e.target.value})} disabled={!editProfileMode} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea id="bio" value={profile.bio} onChange={(e) => setProfile({...profile, bio: e.target.value})} disabled={!editProfileMode} rows={4} />
+                </div>
+                {editProfileMode && <Button onClick={handleProfileUpdate} className="w-full">Save Profile</Button>}
+              </CardContent>
+            </Card>
+          )}
+
+          {activeTab === 'sustainability' && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Sustainability Impact</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <StatsCard stats={userStats} score={sustainabilityScore} />
+              </CardContent>
+            </Card>
+          )}
+
+          {activeTab === 'activity' && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <Package className="h-6 w-6 text-muted-foreground" />
+                  <div>
+                    <CardTitle>My Activity</CardTitle>
+                    <CardDescription>Listings and requests</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <Tabs defaultValue="listings" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="listings">
+                    <Package className="mr-2 h-4 w-4" />
+                    Listings ({listings.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="requests">
+                    <Heart className="mr-2 h-4 w-4" />
+                    Requests (2)
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="listings" className="space-y-4 mt-6">
+                  {listings.map((listing) => (
+                    <Card key={listing.id}>
+                      <CardHeader className="pb-3">
+                        <div className="flex justify-between items-start">
+                          <CardTitle className="text-lg">{listing.title}</CardTitle>
+                          {getStatusBadge(listing.status)}
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">{listing.description}</p>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-xs text-muted-foreground mb-3">
+                          Posted {listing.postedDate} • {listing.requests} requests • {listing.location}
+                        </div>
+                        <div className="flex gap-2">
+                          {listing.status !== "given" && (
+                            <Button size="sm" variant="outline" onClick={() => handleMarkAsGiven(listing.id)}>
+                              <Leaf className="mr-1 h-3 w-3" />
+                              Mark Given
+                            </Button>
+                          )}
+                          <Button size="sm" variant="outline">Edit</Button>
+                          <Button size="sm" variant="destructive" className="ml-auto" onClick={() => handleDelete(listing.id)}>
+                            Delete
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  <Button size="lg" className="mx-auto">
+                    <Plus className="mr-2 h-4 w-4" />
+                    New Listing
+                  </Button>
+                </TabsContent>
+                <TabsContent value="requests" className="space-y-4 mt-6">
+                  {myRequests.map((request) => (
+                    <Card key={request.id}>
+                      <CardHeader className="pb-3">
+                        <div className="flex justify-between">
+                          <CardTitle className="text-lg">Request for: {request.itemName}</CardTitle>
+                          {getStatusBadge(request.status)}
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground mb-3">Requested {request.requestedDate}</p>
+                        <Button size="sm" variant="outline">View Details</Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </TabsContent>
+              </Tabs>
+            </Card>
+          )}
+        </div>
+      </div>
+
+      {/* Dialogs */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>New Listing</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label>Title *</Label>
+              <Input value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} placeholder="Item title" required />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="category">Category *</Label>
+                <Label>Category *</Label>
                 <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Books">Books</SelectItem>
                     <SelectItem value="Electronics">Electronics</SelectItem>
                     <SelectItem value="Clothing">Clothing</SelectItem>
-                    <SelectItem value="Furniture">Furniture</SelectItem>
                     <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  placeholder="Describe your item..."
-                  rows={3}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="location">Pickup Location</Label>
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) => setFormData({...formData, location: e.target.value})}
-                  placeholder="e.g. Library, Room 101"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="image">
-                  Item Photo <Image className="inline ml-1 h-4 w-4" />
-                </Label>
-                <Input id="image" type="file" accept="image/*" onChange={handleImageChange} />
-                {imagePreview && (
-                  <div className="mt-2 p-2 border rounded-md bg-muted/50">
-                    <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded border" />
-                  </div>
-                )}
-              </div>
-              <DialogFooter className="gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">Post Item</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-        <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>{selectedItem?.title || selectedItem?.itemName}</DialogTitle>
-    </DialogHeader>
-
-    <p><strong>Name:</strong> {selectedItem?.title || selectedItem?.itemName}</p>
-    <p><strong>Status:</strong> {selectedItem?.status}</p>
-
-    {selectedItem?.description && (
-      <p><strong>Description:</strong> {selectedItem.description}</p>
-    )}
-
-    {selectedItem?.location && (
-      <p><strong>Location:</strong> {selectedItem.location}</p>
-    )}
-
-    <DialogFooter>
-      <Button onClick={() => setSelectedItem(null)}>Close</Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
-        <Tabs defaultValue="listings" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="listings" className="flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              My Listings
-            </TabsTrigger>
-            <TabsTrigger value="requests" className="flex items-center gap-2">
-              <Heart className="h-4 w-4" />
-              My Requests
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="listings">
-            <div className="space-y-4">
-              {listings.map((listing) => (
-                <Card key={listing.id} className="hover:shadow-md transition-shadow">
-  <CardHeader className="pb-3">
-                    {listing.image && (
-                      <div className="mb-2">
-                        <img src={listing.image} alt={listing.title} className="w-full h-48 object-cover rounded-md" />
-                      </div>
-                    )}
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg">{listing.title}</CardTitle>
-                      {getStatusBadge(listing.status)}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-between items-center text-sm text-gray-600">
-                      <span>Posted {listing.postedDate}</span>
-                      <span>{listing.requests} requests received</span>
-                    </div>
-                    <div className="flex gap-2 mt-3 flex-wrap">
-                      {listing.status !== "given" && (
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="bg-green-50 border-green-200 hover:bg-green-100 text-green-800 font-medium"
-                          onClick={() => handleMarkAsGiven(listing.id)}
-                        >
-                          <Leaf className="h-3 w-3 mr-1" />
-                          Mark as Given
-                        </Button>
-                      )}
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => {
-                          setEditingId(listing.id);
-                          setFormData({
-                            title: listing.title,
-                            category: listing.category || '',
-                            description: listing.description || '',
-                            location: listing.location || '',
-                            image: listing.image || ''
-                          });
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        Edit Listing
-                      </Button>
-                      <Button size="sm" variant="destructive" className="ml-auto" onClick={() => handleDelete(listing.id)}>
-                        Delete
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              <div className="text-center mt-6">
-                <Button size="lg" variant="gradient" onClick={() => setIsDialogOpen(true)}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Post New Item
-                </Button>
+                <Label>Location</Label>
+                <Input value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} placeholder="Pickup location" />
               </div>
             </div>
-          </TabsContent>
-          
-          <TabsContent value="requests">
-            <div className="space-y-4">
-              {myRequests.map((request) => (
-                <Card key={request.id} className="hover:shadow-md transition-shadow">
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg">Request for: {request.itemName}</CardTitle>
-                      {getStatusBadge(request.status)}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-sm text-gray-600">
-                      Requested {request.requestedDate}
-                    </div>
-                    <Button size="sm" variant="outline"  className="mt-3" onClick={() => setSelectedItem(request)}>
-                      View Details
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <Textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} placeholder="Describe item..." />
             </div>
-          </TabsContent>
-        </Tabs>
-      </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+              <Button type="submit">Create</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 export default MyAccountPage;
+
