@@ -1,9 +1,12 @@
-# CampusLoop Admin Metrics & Leaderboard Enhancement TODO
+# Task: Make header bar buttons constant across pages
 
-## Plan Breakdown
-1. [x] Extend LeaderboardUser interface in src/types/sustainability.ts to include itemsGiven and carbon
-2. [x] Create new src/components/ImpactCard.tsx - reusable responsive stats grid for admin metrics (Total Items Reused, CO₂ Saved, Active Users, Listings)
-3. [x] Update src/pages/AdminPage.tsx - Add adminStats mock data and insert ImpactCard before existing Tabs
-4. [x] Update src/components/Leaderboard.tsx - Replace mockUsers with exact sample data (Himasree, Ravi etc.), update table to use real itemsGiven/carbon values, enhance with badges like "Top Contributor", "Eco Champion"
-5. [x] Test: Run dev server, check /admin metrics grid responsive/colors/icons, /leaderboard updated data/badges
+## Steps:
+1. [x] Update Navigation.tsx: Add useLocation for active states (copy logic from old DashboardLayout header).
+2. [x] Update DashboardLayout.tsx: 
+   - Remove entire header/nav/mobile menu code.
+   - Import and add <Navigation /> at top.
+   - Keep/adjust main content wrapper (container/py-8 etc.).
+3. [ ] Test: Run dev server, check all pages (/ , /browse, /leaderboard, /account, /admin, /fake-detector) have identical glassy header with all buttons.
+4. [ ] Complete task.
 
+Current progress: Starting step 1.

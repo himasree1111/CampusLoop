@@ -8,7 +8,7 @@ const Index = () => {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 pt-20">
         <div className="w-full">
           <div id="home" className="w-full">
             <HeroSection />
