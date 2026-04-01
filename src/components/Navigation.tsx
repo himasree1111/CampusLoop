@@ -1,11 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Home, Package, User, Shield, ShieldAlert, Trophy, Menu, X, BookOpen, LogIn } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Navigation = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   const navItems = [
     { name: "Home", icon: Home, path: "/" },
@@ -22,12 +27,12 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/10 backdrop-blur-lg border-b border-white/20">
+    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-200 shadow-sm">
       <div className="w-full px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg pulse-glow">
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
@@ -37,13 +42,13 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => {
+{navItems.map((item) => {
               const IconComponent = item.icon;
               return (
                 <Button
                   key={item.name}
-                  variant="ghost"
-                  className="text-white hover:bg-white/10 hover:text-white transform hover:scale-105 transition-all duration-600"
+                  variant={isActive(item.path) ? "default" : "ghost"}
+                  className={`hover:bg-gray-100 ${isActive(item.path) ? 'bg-blue-600 hover:bg-blue-700 text-white' : ''} transform hover:scale-105 transition-all duration-300`}
                   onClick={() => navigateTo(item.path)}
                 >
                   <IconComponent className="h-4 w-4 mr-2" />
@@ -51,14 +56,16 @@ const Navigation = () => {
                 </Button>
               );
             })}
-            <Button
-              variant="ghost"
-              className="text-white hover:bg-white/10 hover:text-white transform hover:scale-105 transition-all duration-600 ml-2"
-              onClick={() => navigateTo("/login")}
-            >
-              <LogIn className="h-4 w-4 mr-2" />
-              Login
-            </Button>
+            {location.pathname === '/' && (
+              <Button
+                variant="ghost"
+                className="hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 ml-2"
+                onClick={() => navigateTo("/login")}
+              >
+                <LogIn className="h-4 w-4 mr-2" />
+                Login
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -66,7 +73,7 @@ const Navigation = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-white/10"
+              className="hover:bg-gray-100"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -76,7 +83,7 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-white/20 fade-in-up">
+          <div className="md:hidden py-4 border-t border-gray-200 bg-white/80">
             <div className="flex flex-col space-y-2">
               {navItems.map((item) => {
                 const IconComponent = item.icon;
@@ -84,7 +91,7 @@ const Navigation = () => {
                   <Button
                     key={item.name}
                     variant="ghost"
-                    className="text-white hover:bg-white/10 hover:text-white justify-start transform hover:scale-105 transition-all duration-600"
+                    className={`justify-start hover:bg-gray-100 ${isActive(item.path) ? 'bg-blue-600 hover:bg-blue-700 text-white' : ''} transform hover:scale-105 transition-all duration-300`}
                     onClick={() => navigateTo(item.path)}
                   >
                     <IconComponent className="h-4 w-4 mr-2" />
@@ -92,14 +99,16 @@ const Navigation = () => {
                   </Button>
                 );
               })}
-              <Button
-                variant="ghost"
-                className="text-white hover:bg-white/10 hover:text-white justify-start transform hover:scale-105 transition-all duration-600"
-                onClick={() => navigateTo("/login")}
-              >
-                <LogIn className="h-4 w-4 mr-2" />
-                Login
-              </Button>
+              {location.pathname === '/' && (
+                <Button
+                  variant="ghost"
+                  className="justify-start hover:bg-gray-100 transform hover:scale-105 transition-all duration-300"
+                  onClick={() => navigateTo("/login")}
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Login
+                </Button>
+              )}
             </div>
           </div>
         )}
