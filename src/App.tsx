@@ -11,8 +11,12 @@ import AdminPage from "./pages/AdminPage";
 import DashboardLayout from "./components/DashboardLayout";
 import HeroSection from "./components/HeroSection";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import FakeContentDetectorPage from "./pages/FakeContentDetector";
+
 import LeaderboardPage from "./pages/LeaderboardPage";
+
+
 
 const queryClient = new QueryClient();
 
@@ -23,8 +27,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+
+
           <Route path="/browse" element={
             <DashboardLayout>
               <BrowsePage />

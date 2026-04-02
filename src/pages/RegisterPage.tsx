@@ -3,13 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
 import supabase from "../supabaseClient";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
@@ -24,18 +27,26 @@ const LoginPage = () => {
     setIsLoading(true);
     
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: fullName,
+            is_admin: isAdmin,
+          }
+        }
       });
       
       if (error) throw new Error(error.message);
-      navigate("/home");
+      if (data.user) {
+        navigate("/home");
+      }
     } catch (error: any) {
       if (error.message.toLowerCase().includes("rate limit")) {
         setError("Too many attempts. Please wait a few minutes and try again.");
       } else {
-        alert("Login failed: " + error.message);
+        alert("Error: " + error.message);
       }
     } finally {
       setIsLoading(false);
@@ -46,45 +57,40 @@ const LoginPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Login to CampusLoop</CardTitle>
-          <CardDescription className="text-center">Sign in to access your account</CardDescription>
+          <CardTitle className="text-2xl font-bold text-center">Join CampusLoop</CardTitle>
+          <CardDescription className="text-center">Create your account to start sharing</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <Label htmlFor="fullName">Full Name *</Label>
+              <Input id="fullName" placeholder="John Doe" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <Label htmlFor="email">Email *</Label>
+              <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password *</Label>
+              <Input id="password" type="password" placeholder="6+ chars" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
             </div>
             {error && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-md">
                 <p className="text-sm font-medium text-red-600">{error}</p>
               </div>
             )}
+            <div className="flex items-center space-x-2">
+
+              <Checkbox id="isAdmin" checked={isAdmin} onCheckedChange={(checked) => setIsAdmin(!!checked)} />
+              <Label htmlFor="isAdmin">Admin account (for testing)</Label>
+            </div>
           </CardContent>
-          <CardFooter className="flex flex-col gap-2">
+          <CardFooter className="flex flex-col gap-3 p-6">
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Login"}
+              {isLoading ? "Creating..." : "Create Account"}
             </Button>
-            <Button type="button" variant="link" onClick={() => navigate('/register')} className="w-full">
-              No account? Register
+            <Button type="button" variant="link" onClick={() => navigate('/login')} className="w-full">
+              Have account? Login
             </Button>
           </CardFooter>
         </form>
@@ -93,5 +99,5 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
 

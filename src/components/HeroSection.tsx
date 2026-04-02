@@ -36,6 +36,7 @@ const HeroSection = () => {
               size="lg" 
               className="px-8 py-6 text-lg font-semibold transform hover:scale-110 active:scale-95 transition-all duration-600 wave-animation"
               onClick={() => window.location.href = '/login'}
+
             >
               Get Started
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-2 transition-transform duration-300 bounce-animation" />
