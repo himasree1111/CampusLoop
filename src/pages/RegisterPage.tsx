@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import supabase from "../supabaseClient";
 
 const RegisterPage = () => {
@@ -40,7 +41,8 @@ const RegisterPage = () => {
       
       if (error) throw new Error(error.message);
       if (data.user) {
-        navigate("/home");
+        // Role-based redirect (handled by ProtectedIndex)
+        navigate("/");
       }
     } catch (error: any) {
       if (error.message.toLowerCase().includes("rate limit")) {

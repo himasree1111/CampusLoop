@@ -1,11 +1,25 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import ImpactCard from "@/components/ImpactCard";
 import { Clock, User, Shield } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AdminPage = () => {
+  const { isAdmin } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAdmin) {
+      navigate("/account");
+    }
+  }, [isAdmin, navigate]);
+
+  if (!isAdmin) return null;
+
   // Mock data for admin section
   const pendingPosts = [
     {

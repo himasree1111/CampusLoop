@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import supabase from "../supabaseClient";
 
 const LoginPage = () => {
@@ -30,7 +31,8 @@ const LoginPage = () => {
       });
       
       if (error) throw new Error(error.message);
-      navigate("/home");
+      // Role-based redirect after login (handled by ProtectedIndex)
+      navigate("/");
     } catch (error: any) {
       if (error.message.toLowerCase().includes("rate limit")) {
         setError("Too many attempts. Please wait a few minutes and try again.");

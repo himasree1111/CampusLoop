@@ -1,27 +1,40 @@
 import { Button } from "@/components/ui/button";
-import { Home, Package, User, Shield, ShieldAlert, Trophy, Menu, X, BookOpen, LogIn } from "lucide-react";
+import { Home, Package, User, Shield, ShieldAlert, Trophy, Menu, X, BookOpen, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, isAdmin, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isActive = (path: string) => {
     return location.pathname === path;
   };
 
-  const navItems = [
+  const baseNavItems = user && isAdmin ? [] : [
     { name: "Home", icon: Home, path: "/" },
-{ name: "Browse Items", icon: Package, path: "/browse" },
+    { name: "Browse Items", icon: Package, path: "/browse" },
     { name: "Fake Content Detector", icon: ShieldAlert, path: "/fake-detector" },
-    { name: "Leaderboard", icon: Trophy, path: "/leaderboard" },
-    { name: "My Account", icon: User, path: "/account" },
-    { name: "Admin Panel", icon: Shield, path: "/admin" },
   ];
 
-  const navigateTo = (path: string) => {
+  const leaderboardItem = { name: "Leaderboard", icon: Trophy, path: "/leaderboard" };
+
+  const accountNavItems = user ? [
+    ...(isAdmin ? [{ name: "Admin Panel", icon: Shield, path: "/admin" }] : []),
+    { name: "My Account", icon: User, path: "/account" },
+    { name: "Logout", icon: LogOut, path: "/", onClick: async () => {
+      await logout();
+      navigate("/");
+    }}
+  ] : [];
+
+  const navItems = [...baseNavItems, ...(user ? [leaderboardItem] : []), ...accountNavItems];
+
+  const navigateTo = (path: string, onClick?: () => void) => {
+    onClick?.();
     navigate(path);
     setIsMenuOpen(false);
   };
@@ -42,14 +55,14 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-{navItems.map((item) => {
+            {navItems.map((item) => {
               const IconComponent = item.icon;
               return (
                 <Button
                   key={item.name}
                   variant={isActive(item.path) ? "default" : "ghost"}
                   className={`hover:bg-gray-100 ${isActive(item.path) ? 'bg-blue-600 hover:bg-blue-700 text-white' : ''} transform hover:scale-105 transition-all duration-300`}
-                  onClick={() => navigateTo(item.path)}
+                  onClick={() => (item as any).onClick ? (item as any).onClick() : navigateTo(item.path)}
                 >
                   <IconComponent className="h-4 w-4 mr-2" />
                   {item.name}
@@ -83,7 +96,7 @@ const Navigation = () => {
                     key={item.name}
                     variant="ghost"
                     className={`justify-start hover:bg-gray-100 ${isActive(item.path) ? 'bg-blue-600 hover:bg-blue-700 text-white' : ''} transform hover:scale-105 transition-all duration-300`}
-                    onClick={() => navigateTo(item.path)}
+                    onClick={() => (item as any).onClick ? (item as any).onClick() : navigateTo(item.path)}
                   >
                     <IconComponent className="h-4 w-4 mr-2" />
                     {item.name}
