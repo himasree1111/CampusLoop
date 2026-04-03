@@ -43,6 +43,51 @@ const MyAccountPage: React.FC = () => {
     campusLocation: "",
     bio: ""
   });
+  const [listings, setListings] = useState<ListingItem[]>([]);
+  const [imagePreview, setImagePreview] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
+
+  // Fetch user's items
+  useEffect(() => {
+    if (!authUser) return;
+
+    async function fetchItems() {
+      setFetchLoading(true);
+      const { data, error } = await supabase
+        .from('items')
+        .select('*')
+        .eq('owner_id', authUser.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else if (data) {
+        const transformed = data.map((item: Item) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          category: item.category,
+          location: item.location,
+          image: item.image_url,
+          status: (item.status as any) || 'pending',
+          requests: item.requests || 0,
+          postedDate: new Date(item.created_at).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          }) as string
+        }));
+        setListings(transformed);
+      }
+      setFetchLoading(false);
+    }
+>>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
+=======
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -94,14 +139,68 @@ const MyAccountPage: React.FC = () => {
       }
       setFetchLoading(false);
     }
+    fetchItems();
+  }, [authUser]);
+=======
+  const [listings, setListings] = useState<ListingItem[]>([]);
+  const [imagePreview, setImagePreview] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
+
+  // Fetch user's items
+  useEffect(() => {
+    if (!authUser) return;
+
+    async function fetchItems() {
+      setFetchLoading(true);
+      const { data, error } = await supabase
+        .from('items')
+        .select('*')
+        .eq('owner_id', authUser.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else if (data) {
+        const transformed = data.map((item: Item) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          category: item.category,
+          location: item.location,
+          image: item.image_url,
+          status: (item.status as any) || 'pending',
+          requests: item.requests || 0,
+          postedDate: new Date(item.created_at).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          }) as string
+        }));
+        setListings(transformed);
+      }
+      setFetchLoading(false);
+    }
+>>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
 
     fetchItems();
   }, [authUser]);
+  const userId = authUser?.id;
+>>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
+=======
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [editingListingId, setEditingListingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const userId = authUser?.id;
+  const generateId = () => Math.random().toString(36).substr(2, 9);
+=======
+  const userId = authUser?.id;
+>>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
 
   const myRequests = [
     {
