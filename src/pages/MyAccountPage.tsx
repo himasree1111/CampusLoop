@@ -5,7 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { User, Package, Leaf, CheckCircle, Clock, XCircle, Heart, Plus } from "lucide-react";
+import { User, Package, Leaf, CheckCircle, Clock, Heart, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -18,6 +18,8 @@ import { carbonMap, UserStats } from "@/types/sustainability";
 
 const MyAccountPage: React.FC = () => {
   const { user: authUser, isLoading } = useAuth();
+  const { toast } = useToast();
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -32,9 +34,8 @@ const MyAccountPage: React.FC = () => {
       </div>
     );
   }
-  const [activeTab, setActiveTab] = useState('profile');
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [activeTab, setActiveTab] = useState<'profile' | 'sustainability' | 'activity'>('profile');
   const [editProfileMode, setEditProfileMode] = useState(false);
   const [profile, setProfile] = useState({
     name: authUser?.user_metadata?.full_name || "User",
@@ -47,172 +48,73 @@ const MyAccountPage: React.FC = () => {
   const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
-
-  // Fetch user's items
-  useEffect(() => {
-    if (!authUser) return;
-
-    async function fetchItems() {
-      setFetchLoading(true);
-      const { data, error } = await supabase
-        .from('items')
-        .select('*')
-        .eq('owner_id', authUser.id)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive"
-        });
-      } else if (data) {
-        const transformed = data.map((item: Item) => ({
-          id: item.id,
-          title: item.title,
-          description: item.description,
-          category: item.category,
-          location: item.location,
-          image: item.image_url,
-          status: (item.status as any) || 'pending',
-          requests: item.requests || 0,
-          postedDate: new Date(item.created_at).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-          }) as string
-        }));
-        setListings(transformed);
-      }
-      setFetchLoading(false);
-    }
->>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
-=======
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingListingId, setEditingListingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     category: '',
     description: '',
     location: '',
-    condition: '',
+    condition: 'Good',
     image_url: ''
   });
-  const [listings, setListings] = useState<ListingItem[]>([]);
-  const [imagePreview, setImagePreview] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [fetchLoading, setFetchLoading] = useState(true);
-
-  // Fetch user's items
-  useEffect(() => {
-    if (!authUser) return;
-
-    async function fetchItems() {
-      setFetchLoading(true);
-      const { data, error } = await supabase
-        .from('items')
-        .select('*')
-        .eq('owner_id', authUser.id)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive"
-        });
-      } else if (data) {
-        const transformed = data.map((item: Item) => ({
-          id: item.id,
-          title: item.title,
-          description: item.description,
-          category: item.category,
-          location: item.location,
-          image: item.image_url,
-          status: (item.status as any) || 'pending',
-          requests: item.requests || 0,
-          postedDate: new Date(item.created_at).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-          }) as string
-        }));
-        setListings(transformed);
-      }
-      setFetchLoading(false);
-    }
-    fetchItems();
-  }, [authUser]);
-=======
-  const [listings, setListings] = useState<ListingItem[]>([]);
-  const [imagePreview, setImagePreview] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [fetchLoading, setFetchLoading] = useState(true);
-
-  // Fetch user's items
-  useEffect(() => {
-    if (!authUser) return;
-
-    async function fetchItems() {
-      setFetchLoading(true);
-      const { data, error } = await supabase
-        .from('items')
-        .select('*')
-        .eq('owner_id', authUser.id)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive"
-        });
-      } else if (data) {
-        const transformed = data.map((item: Item) => ({
-          id: item.id,
-          title: item.title,
-          description: item.description,
-          category: item.category,
-          location: item.location,
-          image: item.image_url,
-          status: (item.status as any) || 'pending',
-          requests: item.requests || 0,
-          postedDate: new Date(item.created_at).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-          }) as string
-        }));
-        setListings(transformed);
-      }
-      setFetchLoading(false);
-    }
->>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
-
-    fetchItems();
-  }, [authUser]);
-  const userId = authUser?.id;
->>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
-=======
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [editingListingId, setEditingListingId] = useState<string | null>(null);
-  const { toast } = useToast();
+ const userId = authUser?.id;
 
-  const userId = authUser?.id;
-  const generateId = () => Math.random().toString(36).substr(2, 9);
-=======
-  const userId = authUser?.id;
->>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
+  useEffect(() => {
+  if (!userId) return;
 
+  async function fetchItems() {
+    setFetchLoading(true);
+
+    const { data, error } = await supabase
+      .from('items')
+      .select('*')
+      .eq('owner_id', userId)
+      .order('created_at', { ascending: false });
+
+    console.log("FETCH:", data, error);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else if (data) {
+      const transformed = data.map((item: Item) => ({
+        id: item.id,
+        title: item.title,
+        description: item.description || '',
+        category: item.category,
+        location: item.location || '',
+        image: item.image_url || '',
+        status: (item.status as 'pending' | 'approved' | 'given') || 'pending',
+        requests: 0,
+        postedDate: new Date(item.created_at).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric'
+        })
+      }));
+      setListings(transformed);
+    }
+
+    setFetchLoading(false);
+  }
+
+  fetchItems();
+}, [userId]);
   const myRequests = [
     {
       id: "1",
       itemName: "Calculus Textbook",
-      status: "accepted",
+      status: "accepted" as const,
       requestedDate: "3 days ago"
     },
     {
       id: "2",
       itemName: "Winter Jacket",
-      status: "pending",
+      status: "pending" as const,
       requestedDate: "1 day ago"
     }
   ];
@@ -223,14 +125,12 @@ const MyAccountPage: React.FC = () => {
     const carbonSaved = givenItems.reduce((sum, item) => sum + (carbonMap[item.category || "Other"] || 1), 0);
     return {
       itemsGiven,
-      itemsReceived: 2,
+      itemsReceived: myRequests.length,
       carbonSaved
     };
   }, [listings]);
 
   const sustainabilityScore = userStats.itemsGiven * 10 + userStats.carbonSaved * 2;
-
-
 
   const handleProfileUpdate = () => {
     toast({ title: "Saved!", description: "Profile updated." });
@@ -268,6 +168,7 @@ const MyAccountPage: React.FC = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -277,8 +178,16 @@ const MyAccountPage: React.FC = () => {
   };
 
   const handleOpenAdd = () => {
-    setFormData({ title: '', category: '', description: '', location: '', condition: '', image_url: '' });
+    setFormData({
+      title: '',
+      category: '',
+      description: '',
+      location: '',
+      condition: 'Good',
+      image_url: ''
+    });
     setImagePreview('');
+    setImageFile(null);
     setEditingListingId(null);
     setIsDialogOpen(true);
   };
@@ -290,6 +199,7 @@ const MyAccountPage: React.FC = () => {
         .from('items')
         .select('*')
         .eq('id', id)
+        .eq('owner_id', userId)
         .single();
       if (data) {
         setFormData({
@@ -301,93 +211,180 @@ const MyAccountPage: React.FC = () => {
           image_url: data.image_url || ''
         });
         setImagePreview(data.image_url || '');
+        setImageFile(null);
         setEditingListingId(id);
         setIsDialogOpen(true);
       }
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.title || !formData.category || !userId) {
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  console.log("🔥 SUBMIT CLICKED");
+
+  if (!userId) {
+    toast({
+      title: "Error",
+      description: "User not logged in",
+      variant: "destructive"
+    });
+    return;
+  }
+
+  if (!formData.title || !formData.category) {
+    toast({
+      title: "Error",
+      description: "Title and category required",
+      variant: "destructive"
+    });
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    let imageUrl = '';
+
+    // ✅ Upload image
+    if (imageFile) {
+      const filePath = `public/${Date.now()}-${imageFile.name}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('items-images')
+        .upload(filePath, imageFile);
+
+      if (uploadError) {
+        console.error("UPLOAD ERROR:", uploadError);
+        toast({
+          title: "Upload failed",
+          description: uploadError.message,
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('items-images')
+        .getPublicUrl(filePath);
+
+      imageUrl = urlData.publicUrl;
+    }
+
+    const submitData = {
+      owner_id: userId,
+      title: formData.title,
+      description: formData.description,
+      category: formData.category,
+      condition: formData.condition,
+      location: formData.location,
+      image_url: imageUrl,
+      status: 'pending',
+      tags: []
+    };
+
+    console.log("➡️ INSERTING:", submitData);
+
+    const { data, error } = await supabase
+      .from('items')
+      .insert([submitData])
+      .select();
+
+    console.log("✅ INSERT RESULT:", data, error);
+
+    if (error) {
       toast({
-        title: "Error",
-        description: "Title, category and login required",
+        title: "Insert Error",
+        description: error.message,
         variant: "destructive"
       });
       return;
     }
 
-    setLoading(true);
-    const submitData = {
-      title: formData.title,
-      description: formData.description || '',
-      category: formData.category,
-      condition: formData.condition || 'Good',
-      location: formData.location,
-      image_url: imagePreview,
-      tags: [],
-      status: 'pending' as any
-    };
+    toast({
+      title: "Success",
+      description: "Item added successfully 🎉"
+    });
 
-    let error = false;
-    if (editingListingId) {
-      // Edit
-      const { error: updateError } = await supabase
-        .from('items')
-        .update(submitData)
-        .eq('id', editingListingId)
-        .eq('owner_id', userId);
+    setIsDialogOpen(false);
+    setIsDialogOpen(false);
+setFormData({
+  title: '',
+  category: '',
+  description: '',
+  location: '',
+  condition: 'Good',
+  image_url: ''
+});
+setImagePreview('');
+setImageFile(null);
 
-      if (updateError) {
-        toast({ title: "Update failed", description: updateError.message, variant: "destructive" });
-        error = true;
-      } else {
-        toast({ title: "Updated!", description: "Listing updated successfully" });
-      }
-    } else {
-      // Insert
-      const { error: insertError } = await supabase
-        .from('items')
-        .insert({ ...submitData, owner_id: userId });
+// refresh listings properly - duplicate 'data' var fixed
+  const { data: refreshData } = supabase
+    .from('items')
+    .select('*')
+    .eq('owner_id', userId);
 
-      if (insertError) {
-        toast({ title: "Post failed", description: insertError.message, variant: "destructive" });
-        error = true;
-      } else {
-        toast({ title: "Posted!", description: "New listing created and saved to database" });
-      }
-    }
+  if (refreshData) {
+    setListings(refreshData.map(item => ({
+      id: item.id,
+      title: item.title,
+      description: item.description || '',
+      category: item.category,
+      location: item.location || '',
+      image: item.image_url || '',
+      status: item.status || 'pending',
+      requests: 0,
+      postedDate: new Date(item.created_at).toLocaleDateString()
+    })));
+  }
+
+  } catch (err) {
+    console.error("❌ ERROR:", err);
+    toast({
+      title: "Unexpected error",
+      description: String(err),
+      variant: "destructive"
+    });
+  }
+
+  setLoading(false);
+};
+  
+
+  const handleMarkAsGiven = async (id: string) => {
+    const { error } = await supabase
+      .from('items')
+      .update({ status: 'given' as const })
+      .eq('id', id)
+      .eq('owner_id', userId);
 
     if (!error) {
-      setIsDialogOpen(false);
-      // Refetch
-      window.location.reload(); // Simple refetch
+      setListings(listings.map(l => 
+        l.id === id ? { ...l, status: 'given' as const } : l
+      ));
+      toast({
+        title: "Success!",
+        description: "Item marked as given! 🌿",
+      });
     }
-
-    setFormData({ title: '', category: '', description: '', location: '', condition: '', image_url: '' });
-    setImagePreview('');
-    setEditingListingId(null);
-    setLoading(false);
   };
 
-  const handleMarkAsGiven = (id: string) => {
-    setListings(listings.map(l => 
-      l.id === id ? { ...l, status: 'given' as const } : l
-    ));
-    toast({
-      title: "Success!",
-      description: "Item marked as given! 🌿",
-      duration: 3000
-    });
-  };
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase
+      .from('items')
+      .delete()
+      .eq('id', id)
+      .eq('owner_id', userId);
 
-  const handleDelete = (id: string) => {
-    setListings(listings.filter(l => l.id !== id));
-    toast({
-      title: "Deleted",
-      description: "Item removed successfully"
-    });
+    if (!error) {
+      setListings(listings.filter(l => l.id !== id));
+      toast({
+        title: "Deleted",
+        description: "Item removed successfully"
+      });
+    }
   };
 
   return (
@@ -500,52 +497,60 @@ const MyAccountPage: React.FC = () => {
                   </TabsTrigger>
                   <TabsTrigger value="requests">
                     <Heart className="mr-2 h-4 w-4" />
-                    Requests (2)
+                    Requests ({myRequests.length})
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="listings" className="space-y-4 mt-6">
-                  {listings.map((listing) => (
-                    <Card key={listing.id}>
-                      <CardHeader className="pb-3">
-                        <div className="flex items-start gap-3">
-                          {listing.image && (
-                            <img 
-                              src={listing.image} 
-                              alt={listing.title}
-                              className="w-16 h-16 rounded-md object-cover flex-shrink-0"
-                            />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-start">
-                              <CardTitle className="text-lg">{listing.title}</CardTitle>
-                              {getStatusBadge(listing.status)}
+                  {fetchLoading ? (
+                    <div className="text-center py-8">Loading your listings...</div>
+                  ) : listings.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No listings yet. <Button variant="link" onClick={handleOpenAdd} className="h-auto p-0">Create one now</Button>
+                    </div>
+                  ) : (
+                    listings.map((listing) => (
+                      <Card key={listing.id}>
+                        <CardHeader className="pb-3">
+                          <div className="flex items-start gap-3">
+                            {listing.image && (
+                              <img 
+                                src={listing.image} 
+                                alt={listing.title}
+                                className="w-16 h-16 rounded-md object-cover flex-shrink-0"
+                              />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex justify-between items-start">
+                                <CardTitle className="text-lg">{listing.title}</CardTitle>
+                                {getStatusBadge(listing.status)}
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-1">{listing.description}</p>
                             </div>
-                            <p className="text-sm text-muted-foreground mt-1">{listing.description}</p>
                           </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-xs text-muted-foreground mb-3">
-                          Posted {listing.postedDate} • {listing.requests} requests • {listing.location}
-                        </div>
-                        <div className="flex gap-2">
-                          {listing.status !== "given" && (
-                            <Button size="sm" variant="outline" onClick={() => handleMarkAsGiven(listing.id)}>
-                              <Leaf className="mr-1 h-3 w-3" />
-                              Mark Given
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-xs text-muted-foreground mb-3">
+                            Posted {listing.postedDate} • {listing.requests} requests • {listing.location}
+                          </div>
+                          <div className="flex gap-2">
+                            {listing.status !== "given" && (
+                              <Button size="sm" variant="outline" onClick={() => handleMarkAsGiven(listing.id)}>
+                                <Leaf className="mr-1 h-3 w-3" />
+                                Mark Given
+                              </Button>
+                            )}
+                            <Button size="sm" variant="outline" onClick={() => handleOpenEdit(listing.id)}>
+                              Edit
                             </Button>
-                          )}
-                          <Button size="sm" variant="outline" onClick={() => handleOpenEdit(listing.id)}>
-                            Edit
-                          </Button>
-                          <Button size="sm" variant="destructive" className="ml-auto" onClick={() => handleDelete(listing.id)}>
-                            Delete
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-<Button size="lg" className="mx-auto" onClick={handleOpenAdd}>
+                            <Button size="sm" variant="destructive" className="ml-auto" onClick={() => handleDelete(listing.id)}>
+                              Delete
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                  <Button size="lg" className="mx-auto" onClick={handleOpenAdd}>
                     <Plus className="mr-2 h-4 w-4" />
                     New Listing
                   </Button>
@@ -572,40 +577,71 @@ const MyAccountPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Dialogs */}
+      {/* Add/Edit Listing Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingListingId ? 'Edit Listing' : 'New Listing'}</DialogTitle>
+            <DialogDescription>Create or update your item listing</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label>Title *</Label>
-              <Input value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} placeholder="Item title" required />
+              <Input 
+                value={formData.title} 
+                onChange={(e) => setFormData({...formData, title: e.target.value})} 
+                placeholder="Item title" 
+                required 
+              />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Category *</Label>
                 <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Category" />
+                    <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Books">Books</SelectItem>
                     <SelectItem value="Electronics">Electronics</SelectItem>
-                    <SelectItem value="Clothing">Clothing</SelectItem>
+                    <SelectItem value="Clothing">Short Notes</SelectItem>
+                    <SelectItem value="Furniture">PYQ's</SelectItem>
                     <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Location</Label>
-                <Input value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} placeholder="Pickup location" />
+                <Label>Condition</Label>
+                <Select value={formData.condition} onValueChange={(value) => setFormData({...formData, condition: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Condition" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Like New">Like New</SelectItem>
+                    <SelectItem value="Good">Good</SelectItem>
+                    <SelectItem value="Fair">Fair</SelectItem>
+                    <SelectItem value="Poor">Poor</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="space-y-2">
+              <Label>Location *</Label>
+              <Input 
+                value={formData.location} 
+                onChange={(e) => setFormData({...formData, location: e.target.value})} 
+                placeholder="Pickup location (e.g., Main Library)" 
+                required 
+              />
+            </div>
+            <div className="space-y-2">
               <Label>Description</Label>
-              <Textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} placeholder="Describe item..." />
+              <Textarea 
+                value={formData.description} 
+                onChange={(e) => setFormData({...formData, description: e.target.value})} 
+                placeholder="Describe the item condition, usage, etc..." 
+                rows={4}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="image">Image (optional)</Label>
@@ -626,8 +662,12 @@ const MyAccountPage: React.FC = () => {
               )}
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-              <Button type="submit">{editingListingId ? 'Update' : 'Create'}</Button>
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? 'Saving...' : (editingListingId ? 'Update' : 'Create')}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
