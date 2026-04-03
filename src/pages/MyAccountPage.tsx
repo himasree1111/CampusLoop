@@ -11,11 +11,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import StatsCard from "@/components/StatsCard";
+import StatsCard from "../components/StatsCard";
 import { carbonMap, UserStats } from "@/types/sustainability";
 
 const MyAccountPage: React.FC = () => {
-  const { user: authUser } = useAuth();
+  const { user: authUser, isLoading } = useAuth();
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading account...</div>
+      </div>
+    );
+  }
+  if (!authUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Please log in to view your account.</div>
+      </div>
+    );
+  }
   const [activeTab, setActiveTab] = useState('profile');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -58,7 +72,12 @@ const MyAccountPage: React.FC = () => {
       postedDate: "2 days ago"
     }
   ]);
+  const [imagePreview, setImagePreview] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [editingListingId, setEditingListingId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  const generateId = () => Date.now().toString();
 
   const myRequests = [
     {
@@ -123,8 +142,8 @@ const MyAccountPage: React.FC = () => {
     }
   };
 
-  const handleImageUpload = (e: React.FormEvent<HTMLInputElement>) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       setImageFile(file);
       const reader = new FileReader();

@@ -1,8 +1,7 @@
-# Fix MyAccountPage.tsx Build Errors
+# Fix My Account Blank Page Task
 
 ## Steps:
-- [x] 1. Create TODO.md
-- [x] 2. Edit src/pages/MyAccountPage.tsx to remove duplicate function declarations
-- [x] 3. Test build with `npm run build` (succeeded - no errors, build progressing)
-- [x] 4. Mark complete
-
+- [x] 1. Create simplified MyAccountPage with auth guard/loading
+- [x] 2. Update TODO_FIX_ACCOUNT.md progress
+- [ ] 3. Rebuild and test navigation
+- [ ] 4. Complete task with attempt_completion
