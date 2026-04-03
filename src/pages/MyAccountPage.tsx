@@ -1,3 +1,6 @@
+import React, { useState, useMemo } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { User, Package, Leaf, CheckCircle, Clock, XCircle, Heart, Plus } from "lucide-react";
@@ -8,23 +11,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
 import StatsCard from "@/components/StatsCard";
-import { useMemo } from "react";
-import { useToast } from "@/components/ui/use-toast";
 import { carbonMap, UserStats } from "@/types/sustainability";
 
-const MyAccountPage = () => {
+const MyAccountPage: React.FC = () => {
+  const { user: authUser } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editProfileMode, setEditProfileMode] = useState(false);
   const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "+91 9876543210",
-    campusLocation: "Main Campus",
-    bio: "Student passionate about sustainability 🌿"
+    name: authUser?.user_metadata?.full_name || "User",
+    email: authUser?.email || "",
+    phone: "",
+    campusLocation: "",
+    bio: ""
   });
   const [formData, setFormData] = useState({
     title: '',
@@ -35,7 +36,7 @@ const MyAccountPage = () => {
   });
   const { toast } = useToast();
 
-const [listings, setListings] = useState([
+  const [listings, setListings] = useState([
     {
       id: "1",
       title: "Organic Chemistry Textbook",
@@ -238,10 +239,9 @@ const [listings, setListings] = useState([
                 My Account
               </CardTitle>
               <div className="flex flex-col items-center space-y-3 p-4 border rounded-2xl bg-gradient-to-br from-blue-50 to-emerald-50">
-<div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
-                    JD
-                  </div>
-
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
+                  {profile.name.slice(0,2).toUpperCase()}
+                </div>
                 <h3 className="text-lg font-semibold">{profile.name}</h3>
                 <div className="text-xs text-gray-500 text-center">
                   Score: <span className="font-bold text-emerald-600">{sustainabilityScore}</span>
