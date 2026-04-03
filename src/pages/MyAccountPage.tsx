@@ -1,4 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import supabase from '../supabaseClient';
+import type { Item, ListingItem } from '@/types/item';
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,11 +13,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import StatsCard from "@/components/StatsCard";
+import StatsCard from "../components/StatsCard";
 import { carbonMap, UserStats } from "@/types/sustainability";
 
 const MyAccountPage: React.FC = () => {
-  const { user: authUser } = useAuth();
+  const { user: authUser, isLoading } = useAuth();
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading account...</div>
+      </div>
+    );
+  }
+  if (!authUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Please log in to view your account.</div>
+      </div>
+    );
+  }
   const [activeTab, setActiveTab] = useState('profile');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -27,45 +43,164 @@ const MyAccountPage: React.FC = () => {
     campusLocation: "",
     bio: ""
   });
+  const [listings, setListings] = useState<ListingItem[]>([]);
+  const [imagePreview, setImagePreview] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
+
+  // Fetch user's items
+  useEffect(() => {
+    if (!authUser) return;
+
+    async function fetchItems() {
+      setFetchLoading(true);
+      const { data, error } = await supabase
+        .from('items')
+        .select('*')
+        .eq('owner_id', authUser.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else if (data) {
+        const transformed = data.map((item: Item) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          category: item.category,
+          location: item.location,
+          image: item.image_url,
+          status: (item.status as any) || 'pending',
+          requests: item.requests || 0,
+          postedDate: new Date(item.created_at).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          }) as string
+        }));
+        setListings(transformed);
+      }
+      setFetchLoading(false);
+    }
+>>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
+=======
   const [formData, setFormData] = useState({
     title: '',
     category: '',
     description: '',
     location: '',
-    image: ''
+    condition: '',
+    image_url: ''
   });
+  const [listings, setListings] = useState<ListingItem[]>([]);
+  const [imagePreview, setImagePreview] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
+
+  // Fetch user's items
+  useEffect(() => {
+    if (!authUser) return;
+
+    async function fetchItems() {
+      setFetchLoading(true);
+      const { data, error } = await supabase
+        .from('items')
+        .select('*')
+        .eq('owner_id', authUser.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else if (data) {
+        const transformed = data.map((item: Item) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          category: item.category,
+          location: item.location,
+          image: item.image_url,
+          status: (item.status as any) || 'pending',
+          requests: item.requests || 0,
+          postedDate: new Date(item.created_at).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          }) as string
+        }));
+        setListings(transformed);
+      }
+      setFetchLoading(false);
+    }
+    fetchItems();
+  }, [authUser]);
+=======
+  const [listings, setListings] = useState<ListingItem[]>([]);
+  const [imagePreview, setImagePreview] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
+
+  // Fetch user's items
+  useEffect(() => {
+    if (!authUser) return;
+
+    async function fetchItems() {
+      setFetchLoading(true);
+      const { data, error } = await supabase
+        .from('items')
+        .select('*')
+        .eq('owner_id', authUser.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else if (data) {
+        const transformed = data.map((item: Item) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          category: item.category,
+          location: item.location,
+          image: item.image_url,
+          status: (item.status as any) || 'pending',
+          requests: item.requests || 0,
+          postedDate: new Date(item.created_at).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          }) as string
+        }));
+        setListings(transformed);
+      }
+      setFetchLoading(false);
+    }
+>>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
+
+    fetchItems();
+  }, [authUser]);
+  const userId = authUser?.id;
+>>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
+=======
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [editingListingId, setEditingListingId] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const [listings, setListings] = useState([
-    {
-      id: "1",
-      title: "Organic Chemistry Textbook",
-      description: "Chemistry textbook",
-      category: "Books",
-      location: "Library",
-      image: "",
-      status: "approved",
-      requests: 3,
-      postedDate: "1 week ago"
-    },
-    {
-      id: "2",
-      title: "Calculator",
-      description: "Scientific calculator",
-      category: "Electronics",
-      location: "Math Dept",
-      image: "",
-      status: "pending",
-      requests: 0,
-      postedDate: "2 days ago"
-    }
-  ]);
-
-  const [editingListingId, setEditingListingId] = useState<string | null>(null);
-  const [imagePreview, setImagePreview] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-
+  const userId = authUser?.id;
   const generateId = () => Math.random().toString(36).substr(2, 9);
+=======
+  const userId = authUser?.id;
+>>>>>>> 616ca0890fe5c5758ef497cc4ea85b84baa7ff59
 
   const myRequests = [
     {
@@ -130,10 +265,9 @@ const MyAccountPage: React.FC = () => {
     }
   };
 
-  const handleImageUpload = (e: React.FormEvent<HTMLInputElement>) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
-      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -143,70 +277,98 @@ const MyAccountPage: React.FC = () => {
   };
 
   const handleOpenAdd = () => {
-    setFormData({ title: '', category: '', description: '', location: '', image: '' });
+    setFormData({ title: '', category: '', description: '', location: '', condition: '', image_url: '' });
     setImagePreview('');
-    setImageFile(null);
     setEditingListingId(null);
     setIsDialogOpen(true);
   };
 
-  const handleOpenEdit = (id: string) => {
+  const handleOpenEdit = async (id: string) => {
     const listing = listings.find(l => l.id === id);
     if (listing) {
-      setFormData({
-        title: listing.title,
-        category: listing.category,
-        description: listing.description,
-        location: listing.location,
-        image: ''
-      });
-      setImagePreview(listing.image || '');
-      setImageFile(null);
-      setEditingListingId(id);
-      setIsDialogOpen(true);
+      const { data } = await supabase
+        .from('items')
+        .select('*')
+        .eq('id', id)
+        .single();
+      if (data) {
+        setFormData({
+          title: data.title,
+          category: data.category,
+          description: data.description,
+          location: data.location,
+          condition: data.condition || 'Good',
+          image_url: data.image_url || ''
+        });
+        setImagePreview(data.image_url || '');
+        setEditingListingId(id);
+        setIsDialogOpen(true);
+      }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.category) {
+    if (!formData.title || !formData.category || !userId) {
       toast({
         title: "Error",
-        description: "Title and category required",
+        description: "Title, category and login required",
         variant: "destructive"
       });
       return;
     }
 
-    const newImage = imagePreview || (listings.find(l => l.id === editingListingId)?.image || '');
+    setLoading(true);
+    const submitData = {
+      title: formData.title,
+      description: formData.description || '',
+      category: formData.category,
+      condition: formData.condition || 'Good',
+      location: formData.location,
+      image_url: imagePreview,
+      tags: [],
+      status: 'pending' as any
+    };
 
+    let error = false;
     if (editingListingId) {
       // Edit
-      setListings(listings.map(l => 
-        l.id === editingListingId 
-          ? { ...l, ...formData, image: newImage }
-          : l
-      ));
-      toast({ title: "Updated!", description: "Listing updated successfully" });
+      const { error: updateError } = await supabase
+        .from('items')
+        .update(submitData)
+        .eq('id', editingListingId)
+        .eq('owner_id', userId);
+
+      if (updateError) {
+        toast({ title: "Update failed", description: updateError.message, variant: "destructive" });
+        error = true;
+      } else {
+        toast({ title: "Updated!", description: "Listing updated successfully" });
+      }
     } else {
-      // Add new
-      const newListing = {
-        id: generateId(),
-        ...formData,
-        image: newImage,
-        status: 'pending' as const,
-        requests: 0,
-        postedDate: 'Just now'
-      };
-      setListings([newListing, ...listings]);
-      toast({ title: "Posted!", description: "New listing created" });
+      // Insert
+      const { error: insertError } = await supabase
+        .from('items')
+        .insert({ ...submitData, owner_id: userId });
+
+      if (insertError) {
+        toast({ title: "Post failed", description: insertError.message, variant: "destructive" });
+        error = true;
+      } else {
+        toast({ title: "Posted!", description: "New listing created and saved to database" });
+      }
     }
 
-    setIsDialogOpen(false);
-    setFormData({ title: '', category: '', description: '', location: '', image: '' });
+    if (!error) {
+      setIsDialogOpen(false);
+      // Refetch
+      window.location.reload(); // Simple refetch
+    }
+
+    setFormData({ title: '', category: '', description: '', location: '', condition: '', image_url: '' });
     setImagePreview('');
-    setImageFile(null);
     setEditingListingId(null);
+    setLoading(false);
   };
 
   const handleMarkAsGiven = (id: string) => {

@@ -6,13 +6,10 @@ import { Heart, MapPin, Clock, User, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
-export interface SwapItem {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  condition: string;
-  location: string;
+import supabase from '../supabaseClient';
+import type { Item as DBItem } from '@/types/item';
+
+export interface SwapItem extends Omit<DBItem, 'owner_id' | 'created_at' | 'updated_at'> {
   postedBy: string;
   postedDate: string;
   image?: string;
@@ -23,6 +20,8 @@ export interface SwapItem {
 const SwapsGrid = () => {
   const [wishlistItems, setWishlistItems] = useState<string[]>([]);
   const [likedCategories, setLikedCategories] = useState<string[]>([]);
+  const [items, setItems] = useState<SwapItem[]>([]);
+  const [loading, setLoading] = useState(true);
   
   // Load from localStorage on mount
   useEffect(() => {
@@ -45,6 +44,38 @@ const SwapsGrid = () => {
   useEffect(() => {
     localStorage.setItem('campusLoopLikedCategories', JSON.stringify(likedCategories));
   }, [likedCategories]);
+
+  // Fetch items from Supabase
+  useEffect(() => {
+    async function fetchItems() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('items')
+        .select('*')
+        .neq('status', 'given')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching items:', error);
+      } else if (data) {
+        const transformed: SwapItem[] = data.map((item: DBItem) => ({
+          ...item,
+          postedBy: 'Campus User', // Fetch from profiles if needed
+          postedDate: new Date(item.created_at).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          }),
+          tags: item.tags || [],
+          image: item.image_url,
+        }));
+        setItems(transformed);
+      }
+      setLoading(false);
+    }
+    
+    fetchItems();
+  }, []);
 
   const toggleWishlist = (itemId: string, item: SwapItem) => {
     setWishlistItems(prev => {
@@ -104,9 +135,14 @@ const SwapsGrid = () => {
     return score;
   };
 
-  const swapItems: SwapItem[] = [
+  if (loading) {
+    return <div className="text-center py-12">Loading items...</div>;
+  }
+
+  const swapItems = items.length > 0 ? items : [
     {
       id: "1",
+      status: 'available',
       title: "Organic Chemistry Textbook",
       description: "Used Organic Chemistry textbook with all chapters intact. Great for students taking CHEM 2310. Includes solutions manual.",
       category: "Books",
@@ -203,6 +239,7 @@ const SwapsGrid = () => {
     },
     {
       id: "9",
+      status: 'available',
       title: "English Textbook",
       description: "Excellent condition English textbook covering literature and language concepts. Suitable for high school and college students.",
       category: "Textbooks",
