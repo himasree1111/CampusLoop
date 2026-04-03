@@ -41,6 +41,7 @@ const MyAccountPage: React.FC = () => {
       description: "Chemistry textbook",
       category: "Books",
       location: "Library",
+      image: "",
       status: "approved",
       requests: 3,
       postedDate: "1 week ago"
@@ -51,6 +52,7 @@ const MyAccountPage: React.FC = () => {
       description: "Scientific calculator",
       category: "Electronics",
       location: "Math Dept",
+      image: "",
       status: "pending",
       requests: 0,
       postedDate: "2 days ago"
@@ -86,20 +88,7 @@ const MyAccountPage: React.FC = () => {
 
   const sustainabilityScore = userStats.itemsGiven * 10 + userStats.carbonSaved * 2;
 
-  const handleMarkAsGiven = (id: string) => {
-    toast({
-      title: "Success!",
-      description: "Item marked as given! 🌿",
-      duration: 3000
-    });
-  };
 
-  const handleDelete = (id: string) => {
-    toast({
-      title: "Deleted",
-      description: "Item removed successfully"
-    });
-  };
 
   const handleProfileUpdate = () => {
     toast({ title: "Saved!", description: "Profile updated." });
@@ -134,6 +123,43 @@ const MyAccountPage: React.FC = () => {
     }
   };
 
+  const handleImageUpload = (e: React.FormEvent<HTMLInputElement>) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleOpenAdd = () => {
+    setFormData({ title: '', category: '', description: '', location: '', image: '' });
+    setImagePreview('');
+    setImageFile(null);
+    setEditingListingId(null);
+    setIsDialogOpen(true);
+  };
+
+  const handleOpenEdit = (id: string) => {
+    const listing = listings.find(l => l.id === id);
+    if (listing) {
+      setFormData({
+        title: listing.title,
+        category: listing.category,
+        description: listing.description,
+        location: listing.location,
+        image: ''
+      });
+      setImagePreview(listing.image || '');
+      setImageFile(null);
+      setEditingListingId(id);
+      setIsDialogOpen(true);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.category) {
@@ -144,9 +170,55 @@ const MyAccountPage: React.FC = () => {
       });
       return;
     }
-    toast({ title: editingId ? "Updated" : "Posted!", description: "Item saved" });
+
+    const newImage = imagePreview || (listings.find(l => l.id === editingListingId)?.image || '');
+
+    if (editingListingId) {
+      // Edit
+      setListings(listings.map(l => 
+        l.id === editingListingId 
+          ? { ...l, ...formData, image: newImage }
+          : l
+      ));
+      toast({ title: "Updated!", description: "Listing updated successfully" });
+    } else {
+      // Add new
+      const newListing = {
+        id: generateId(),
+        ...formData,
+        image: newImage,
+        status: 'pending' as const,
+        requests: 0,
+        postedDate: 'Just now'
+      };
+      setListings([newListing, ...listings]);
+      toast({ title: "Posted!", description: "New listing created" });
+    }
+
     setIsDialogOpen(false);
     setFormData({ title: '', category: '', description: '', location: '', image: '' });
+    setImagePreview('');
+    setImageFile(null);
+    setEditingListingId(null);
+  };
+
+  const handleMarkAsGiven = (id: string) => {
+    setListings(listings.map(l => 
+      l.id === id ? { ...l, status: 'given' as const } : l
+    ));
+    toast({
+      title: "Success!",
+      description: "Item marked as given! 🌿",
+      duration: 3000
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    setListings(listings.filter(l => l.id !== id));
+    toast({
+      title: "Deleted",
+      description: "Item removed successfully"
+    });
   };
 
   return (
@@ -266,11 +338,22 @@ const MyAccountPage: React.FC = () => {
                   {listings.map((listing) => (
                     <Card key={listing.id}>
                       <CardHeader className="pb-3">
-                        <div className="flex justify-between items-start">
-                          <CardTitle className="text-lg">{listing.title}</CardTitle>
-                          {getStatusBadge(listing.status)}
+                        <div className="flex items-start gap-3">
+                          {listing.image && (
+                            <img 
+                              src={listing.image} 
+                              alt={listing.title}
+                              className="w-16 h-16 rounded-md object-cover flex-shrink-0"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start">
+                              <CardTitle className="text-lg">{listing.title}</CardTitle>
+                              {getStatusBadge(listing.status)}
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">{listing.description}</p>
+                          </div>
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">{listing.description}</p>
                       </CardHeader>
                       <CardContent>
                         <div className="text-xs text-muted-foreground mb-3">
@@ -283,7 +366,9 @@ const MyAccountPage: React.FC = () => {
                               Mark Given
                             </Button>
                           )}
-                          <Button size="sm" variant="outline">Edit</Button>
+                          <Button size="sm" variant="outline" onClick={() => handleOpenEdit(listing.id)}>
+                            Edit
+                          </Button>
                           <Button size="sm" variant="destructive" className="ml-auto" onClick={() => handleDelete(listing.id)}>
                             Delete
                           </Button>
@@ -291,7 +376,7 @@ const MyAccountPage: React.FC = () => {
                       </CardContent>
                     </Card>
                   ))}
-                  <Button size="lg" className="mx-auto">
+<Button size="lg" className="mx-auto" onClick={handleOpenAdd}>
                     <Plus className="mr-2 h-4 w-4" />
                     New Listing
                   </Button>
@@ -322,7 +407,7 @@ const MyAccountPage: React.FC = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>New Listing</DialogTitle>
+            <DialogTitle>{editingListingId ? 'Edit Listing' : 'New Listing'}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -353,9 +438,27 @@ const MyAccountPage: React.FC = () => {
               <Label>Description</Label>
               <Textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} placeholder="Describe item..." />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="image">Image (optional)</Label>
+              <Input 
+                id="image"
+                type="file" 
+                accept="image/*" 
+                onChange={handleImageUpload}
+              />
+              {imagePreview && (
+                <div className="mt-2">
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    className="w-24 h-24 rounded-md object-cover border"
+                  />
+                </div>
+              )}
+            </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-              <Button type="submit">Create</Button>
+              <Button type="submit">{editingListingId ? 'Update' : 'Create'}</Button>
             </DialogFooter>
           </form>
         </DialogContent>
